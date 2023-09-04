@@ -1,15 +1,20 @@
-import sqlite3
+import psycopg2
+from env import DB_USER, DB_PASS, DB_HOST, DB_PORT
+
 
 class DatabaseHandler:
 
     def __init__(self):
         self.connection = self._get_connection()
         self.cursor = self.connection.cursor()
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
-        self.connection.commit()
 
     def _get_connection(self):
-        return sqlite3.connect('database.db')
+        return psycopg2.connect(
+            user=DB_USER,
+            password=DB_PASS,
+            host=DB_HOST,
+            port=DB_PORT
+        )
     
     
     def insert_user(self, username, password):
