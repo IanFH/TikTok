@@ -64,13 +64,16 @@ class User:
     def get_favourite_contacts(self):
         return self.favourite_contacts
     
-    def from_tuple(self, user_tuple: tuple[int, str, int, int, int, float]):
-        self._uid = user_tuple[0]
-        self._username = user_tuple[1]
-        self._username_hashed = user_tuple[2]
-        self._password_hashed_one = user_tuple[3]
-        self._password_hashed_two = user_tuple[4]
-        self._balance = user_tuple[5]
+    @staticmethod
+    def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
+        uid = user_tuple[0]
+        username = user_tuple[1]
+        username_hashed = user_tuple[2]
+        password_hashed_one = user_tuple[3]
+        password_hashed_two = user_tuple[4]
+        balance = user_tuple[5]
+        return User(uid, username, username_hashed, 
+                    password_hashed_one, password_hashed_two, balance)
 
     def insert_to_database(self, db_handler: DatabaseHandler):
         result = db_handler.fetch_user_data(self._username, self._username_hashed)

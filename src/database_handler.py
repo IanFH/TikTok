@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 from env import DB_USER, DB_PASS, DB_HOST, DB_PORT
 
 
@@ -9,7 +9,7 @@ class DatabaseHandler:
         self.cursor = self.connection.cursor()
 
     def _get_connection(self):
-        return psycopg2.connect(
+        return psycopg.connect(
             user=DB_USER,
             password=DB_PASS,
             host=DB_HOST,
