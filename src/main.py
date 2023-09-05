@@ -69,7 +69,7 @@ def topup_success():
     transaction_session_id = request.args.get('session_id', None)
     retrieved_username = request.args.get('Username', None)
     retrieved_uid = request.args.get('uid', None)
-    user = User.deserialize(session['user'])
+    user = User.deserialise(session['user'])
     res = TransactionHandler.process(transaction_session_id, user, retrieved_username, retrieved_uid)
     if res:
         # TODO: Create HTML (Ian & Pandu)
