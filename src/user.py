@@ -1,4 +1,4 @@
-from src.database_handler import DatabaseHandler
+from database_handler import DatabaseHandler
 
 
 class User:
