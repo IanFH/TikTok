@@ -69,6 +69,24 @@ class DatabaseHandler:
         self.cursor.execute(sql_query, (uid, balance))
         self.connection.commit()
 
+    def add_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: str):
+        """
+        Adds a transaction to the database
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = ''
+        self.cursor.execute(sql_query, (sender_uid, receiver_uid, amount, date))
+        self.connection.commit()
+
+    def fetch_transactions(self, uid: int, start_date: str, end_date: str):
+        """
+        Fetches the transactions of a user from the database
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = ''
+        self.cursor.execute(sql_query, (uid, start_date, end_date))
+        self.connection.commit()
+
     def __del__(self):
         self.connection.close()
 
