@@ -17,8 +17,6 @@ class TransactionHandler:
 
     def _retrieve_checkout_session(self) -> None:
         self._checkout_session_data = stripe.checkout.Session.retrieve(self._transaction_session_id)
-        print(self._checkout_session_data)
-        print(f"client reference id: {self._checkout_session_data.get('client_reference_id', None)}")
 
     def _validate_checkout_session(self) -> bool:
         payment_status = self._checkout_session_data.get('payment_status', None)

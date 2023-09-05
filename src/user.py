@@ -84,6 +84,35 @@ class User:
                                    self._password_hashed_one, self._password_hashed_two)
             return True
         
+    def get_transaction_history(self, db_handler: DatabaseHandler, start_date: str, end_date: str):
+        return db_handler.fetch_transactions(self._uid, start_date, end_date)
+    
+    @staticmethod
+    def hash_password_two(password: str):
+        n = len(password)
+        salted_password = password[0:n//4] + "$" + password[n//4:n//2] + "$" + password[n//2: n * 3 // 4] + "$" + password[n * 3 // 4:]
+        return abs(hash(salted_password))
+    
+    @staticmethod
+    def hash_password_one(password: str):
+        return abs(hash(password))
+
+    @staticmethod 
+    def hash_username(username: str):
+        return abs(hash(username))
+
+    @staticmethod
+    def username_exists(db_handler: DatabaseHandler, username: str):
+        result = db_handler.fetch_user_data(username, User.hash_username(username))
+        return result is None
+    
+    @staticmethod
+    def create_user(username: str, password: str):
+        username_hashed = User.hash_username(username)
+        password_hashed_one = User.hash_password_one(password)
+        password_hashed_two = User.hash_password_two(password)
+        return User(None, username, username_hashed, password_hashed_one, password_hashed_two)
+        
     def serialise(self):
         return {
             'uid': self._uid,
@@ -104,3 +133,4 @@ class User:
         balance = serialised_user['balance']
         return User(uid, username, username_hashed, 
                     password_hashed_one, password_hashed_two, balance)
+    

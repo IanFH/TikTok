@@ -81,11 +81,13 @@ class DatabaseHandler:
     def fetch_transactions(self, uid: int, start_date: str, end_date: str):
         """
         Fetches the transactions of a user from the database
+        Each transaction is a tuple of (sender_uid, receiver_uid, amount, date)
         """
         # TODO: Implement SQL query (Jeff)
         sql_query = ''
         self.cursor.execute(sql_query, (uid, start_date, end_date))
-        self.connection.commit()
+        results = self.cursor.fetchall()
+        return results
 
     def __del__(self):
         self.connection.close()
