@@ -83,3 +83,24 @@ class User:
             db_handler.insert_user(self._username, self._username_hashed, 
                                    self._password_hashed_one, self._password_hashed_two)
             return True
+        
+    def serialise(self):
+        return {
+            'uid': self._uid,
+            'username': self._username,
+            'username_hashed': self._username_hashed,
+            'password_hashed_one': self._password_hashed_one,
+            'password_hashed_two': self._password_hashed_two,
+            'balance': self._balance
+        }
+    
+    @staticmethod
+    def deserialise(serialised_user: dict):
+        uid = serialised_user['uid']
+        username = serialised_user['username']
+        username_hashed = serialised_user['username_hashed']
+        password_hashed_one = serialised_user['password_hashed_one']
+        password_hashed_two = serialised_user['password_hashed_two']
+        balance = serialised_user['balance']
+        return User(uid, username, username_hashed, 
+                    password_hashed_one, password_hashed_two, balance)

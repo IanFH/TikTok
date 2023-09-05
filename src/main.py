@@ -1,10 +1,13 @@
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, session
 from login_handler import LoginHandler
 from user import User
 from transaction_handler import TransactionHandler
+from env import APP_SK
 
 
 app = Flask(__name__)
+app.secret_key = APP_SK
+
 
 @app.route('/')
 def root():
@@ -40,6 +43,7 @@ def login_callback():
     login_handler = LoginHandler(request.form['username'], request.form['password'])
     user = login_handler.login()
     if user:
+        session['user'] = user.serialize()
         return redirect(url_for('home'))
     else:
         return redirect(url_for('login', err_msg='Invalid username or password'))
@@ -47,20 +51,29 @@ def login_callback():
 @app.route('/home')
 def home():
     # TODO: Create HTML (Ian & Pandu)
+    user = User.deserialize(session['user'])
+    # some code logic (tbc)
+    session['user'] = user.serialize()
     return render_template('home.html')
 
 @app.route('/topup')
 def topup():
-    # TODO: Create HTML (Ian & Pandu)
-    # Page should redirect to this URL: https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII
-    return render_template('topup.html')
+    # user = User.deserialize(session['user'])
+    user = User(69, 'test_user')
+    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?Username={user.get_username()}&uid={user.get_uid()}"
+    # TODO: Add safe url (Joseph)
+    return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
     transaction_session_id = request.args.get('session_id', None)
-    res = TransactionHandler.process(transaction_session_id)
+    retrieved_username = request.args.get('Username', None)
+    retrieved_uid = request.args.get('uid', None)
+    user = User.deserialize(session['user'])
+    res = TransactionHandler.process(transaction_session_id, user, retrieved_username, retrieved_uid)
     if res:
         # TODO: Create HTML (Ian & Pandu)
+        print(f"Success!")
         return render_template('topup_success.html')
     else:
         return redirect(url_for('topup_fail'))
