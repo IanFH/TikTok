@@ -53,24 +53,24 @@ def home():
     # TODO: Create HTML (Ian & Pandu)
     user = User.deserialize(session['user'])
     # some code logic (tbc)
-    session['user'] = user.serialize()
+    session['user'] = user.serialise()
     return render_template('home.html')
 
 @app.route('/topup')
 def topup():
     # user = User.deserialize(session['user'])
     user = User(69, 'test_user')
-    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?Username={user.get_username()}&uid={user.get_uid()}"
+    session['user'] = user.serialise()
+    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}"
     # TODO: Add safe url (Joseph)
     return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
     transaction_session_id = request.args.get('session_id', None)
-    retrieved_username = request.args.get('Username', None)
     retrieved_uid = request.args.get('uid', None)
-    user = User.deserialise(session['user'])
-    res = TransactionHandler.process(transaction_session_id, user, retrieved_username, retrieved_uid)
+    transaction_handler = TransactionHandler(transaction_session_id)
+    res = transaction_handler.process()
     if res:
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
