@@ -69,13 +69,37 @@ class DatabaseHandler:
         self.cursor.execute(sql_query, (uid, balance))
         self.connection.commit()
 
-    def add_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: str):
+    def bulk_update_balance(self, entries: list[int, float]):
+        """
+        Updates the balance of multiple users in the database based on uid
+        """
+         # TODO: modify table name if necessary (Jeff)
+        sql_query = """
+                    UPDATE users
+                    SET balance = balance + %s
+                    WHERE uid = %s
+                    """
+        self.cursor.executemany(sql_query, entries)
+        self.connection.commit()
+
+    def insert_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: str):
         """
         Adds a transaction to the database
         """
         # TODO: Implement SQL query (Jeff)
         sql_query = ''
         self.cursor.execute(sql_query, (sender_uid, receiver_uid, amount, date))
+        self.connection.commit()
+    
+    def bulk_insert_transactions(self, entries: list[int, int, float, str]):
+        """
+        Adds multiple transactions to the database
+        """
+        # TODO: modify table name if necessary (Jeff)
+        sql_query = """
+                    INSERT INTO transactions VALUES (%s, %s, %s, %s)
+                    """
+        self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
     def fetch_transactions(self, uid: int, start_date: str, end_date: str):
@@ -96,6 +120,6 @@ class DatabaseHandler:
 # SAMPLE
 # In this function, the table name is 'users'
 # def insert_user(self, username, password):
-#    self.cursor.execute('INSERT INTO users VALUES (NULL, ?, ?)', (username, password))
+#    self.cursor.execute('INSERT INTO users VALUES (NULL, %s, %s)', (username, password))
 #    self.connection.commit()
 #

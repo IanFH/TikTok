@@ -1,6 +1,7 @@
 import datetime
 from env import STRIPE_SK
 import stripe
+from transaction_accumulator import TransactionAccumulator
 
 
 stripe.api_key = STRIPE_SK
@@ -29,7 +30,7 @@ class TransactionHandler:
                 return curr_unix_time - expires_at_unix_time < self._MAX_DURATION_DIFF
         return False
           
-    def process(self, transaction_accumulator) -> bool:
+    def process(self, transaction_accumulator: TransactionAccumulator) -> bool:
         self._retrieve_checkout_session()
-        transaction_accumulator.add_top_up_task(self._uid, self._amount_total)
+        return transaction_accumulator.add_topup_task(self._uid, self._amount_total, self._transaction_session_id)
         
