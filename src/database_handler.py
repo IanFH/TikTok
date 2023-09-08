@@ -113,6 +113,55 @@ class DatabaseHandler:
         results = self.cursor.fetchall()
         return results
 
+    def rollback(self):
+        """
+        Rolls back the database to the last commit
+        """
+        self.connection.rollback()
+
+    def list_tables(self):
+        # TODO: Remove in production
+        query = """
+                SELECT table_schema, table_name
+                FROM information_schema.tables
+                WHERE (table_schema = 'public')
+                ORDER BY table_name;
+                """
+        self.cursor.execute(query)
+        self.connection.commit()
+        result = self.cursor.fetchall()
+        return result
+
+
+    def list_fields(self, name):
+        # TODO: Remove in production
+        """
+        returns a python list of field names
+        """
+        query = """ 
+                SELECT column_name FROM
+                INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = %s;
+                """
+        self.cursor.execute(query, (name, ))
+        result = self.cursor.fetchall()
+        fields = [field[0] for field in result]
+        return fields
+
+
+    def list_schema(self):
+        table_names = self.list_tables()
+        with open("DB_SCHEMA.txt", "w") as f:
+            for el in table_names:
+                if el[1] != 'pg_stat_statements':
+                    query = f""" SELECT * FROM "{el[1]}" ; """
+                    self.cursor.execute(query)
+                    result = self.cursor.fetchall()
+                    f.write(f"===TABLE: {el[1]}===\n")
+                    f.write(f"Columns: {self.list_fields(el[1])}\n")
+                    for r in result:
+                        f.write(f"{r}\n")
+
     def __del__(self):
         self.connection.close()
 
@@ -123,3 +172,15 @@ class DatabaseHandler:
 #    self.cursor.execute('INSERT INTO users VALUES (NULL, %s, %s)', (username, password))
 #    self.connection.commit()
 #
+
+if __name__ == "__main__":
+    # For testing of queries and execution of one off queries
+    db_handler = DatabaseHandler()
+    # sql_query = """
+    #             <Some Query>
+    #             """
+    # db_handler.cursor.execute(sql_query)
+    # db_handler.connection.commit()
+
+    # To see what is in the db
+    db_handler.list_schema()

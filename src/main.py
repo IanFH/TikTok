@@ -1,5 +1,4 @@
 from flask import Flask, redirect, url_for, request, render_template, session
-from apscheduler.schedulers.background import BackgroundScheduler
 from login_handler import LoginHandler
 from urllib import parse
 from user import User
