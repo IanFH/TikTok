@@ -4,14 +4,18 @@ from login_handler import LoginHandler
 from urllib import parse
 from user import User
 from transaction_handler import TransactionHandler
+from transaction_accumulator import TransactionAccumulator
+from bg_task_manager import BgTaskManager
 from env import APP_SK
 from database_handler import DatabaseHandler
 
 
 app = Flask(__name__)
 app.secret_key = APP_SK
-background_scheduler = BackgroundScheduler()
 database_handler = DatabaseHandler()
+transaction_accumulator = TransactionAccumulator()
+bg_task_manager = BgTaskManager(transaction_accumulator, database_handler)
+bg_task_manager.start()
 
 
 @app.route('/')
@@ -63,20 +67,29 @@ def login_callback():
 @app.route('/home')
 def home():
     # TODO: Create HTML (Ian & Pandu)
-    user = User.deserialize(session['user'])
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
+    user = User.deserialize(user_serialised)
     session['user'] = user.serialise()
     return render_template('home.html', user=user)
 
 @app.route('/topup')
 def topup():
     # user = User.deserialize(session['user'])
-    user = User(69, 'test_user')
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
+    user = User.deserialize(user_serialised)
     session['user'] = user.serialise()
     url = parse(f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}")
     return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     transaction_session_id = request.args.get('session_id', None)
     transaction_handler = TransactionHandler(transaction_session_id)
     res = transaction_handler.process()
@@ -90,36 +103,59 @@ def topup_success():
 @app.route('/topup/fail')
 def topup_fail():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     return render_template('topup_fail.html')
 
 @app.route('/transfer')
 def transfer():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     return render_template('transfer.html')
 
 @app.route('/transfer/confirm', methods=['POST'])
 def confirm():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     return render_template('verify.html', data=request.form)
 
 @app.route('/transfer/confirm/complete', methods=['POST'])
 def complete():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     return render_template('complete.html', data=request.form)
 
 @app.route('/history')
 def history():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     return render_template('history.html')
 
 @app.route('/history/details')
 def history_details():
     # TODO: Create HTML (Ian & Pandu)
+    user_serialised = session.get('user', None)
+    if user_serialised is None:
+        return redirect(url_for('root'))
     start_date = request.form['start_date']
     end_date = request.form['end_date']
     user = User.deserialize(session['user'])
     transaction_history = user.get_transaction_history(database_handler, start_date, end_date)
     return render_template('history_details.html', transaction_history=transaction_history)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('root'))
 
 if __name__ == "__main__":
     app.run()
