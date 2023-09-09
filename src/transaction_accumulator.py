@@ -2,6 +2,7 @@ from transaction_task import TransactionTask
 from transaction_queue import TransactionQueue
 from database_handler import DatabaseHandler
 import psycopg
+import datetime
 
 
 class TransactionAccumulator:
@@ -20,11 +21,13 @@ class TransactionAccumulator:
     def add_topup_task(self, uid: int, amount: float, transaction_session_id: str):
         if transaction_session_id not in self._used_transaction_session_ids:
             self._used_transaction_session_ids.add(transaction_session_id)
-            self._add_transaction(TransactionTask(self._MAIN_POOL_ID, uid, amount, transaction_session_id))
+            curr_date = datetime.datetime.now()
+            self._add_transaction(TransactionTask(self._MAIN_POOL_ID, uid, amount, curr_date))
             return True
         return False
 
-    def add_transfer_task(self, sender_uid: int, recipient_uid: int, amount: float, date: str):
+    def add_transfer_task(self, sender_uid: int, recipient_uid: int, 
+                          amount: float, date: datetime.datetime):
         self._add_transaction(TransactionTask(sender_uid, recipient_uid, amount, date))
 
     def _accumulate_transactions(self):
