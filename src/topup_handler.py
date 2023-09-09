@@ -29,6 +29,8 @@ class TopUpHandler:
         self._uid = self._checkout_session_data.get('client_reference_id', None)
         self._amount_total = self._checkout_session_data.get('amount_total', None)
         if self._uid is not None and self._amount_total is not None and payment_status == "paid":
+            self._amount_total /= 100
+            self._amount_total = round(self._amount_total, 2)
             curr_unix_time = datetime.datetime.now().timestamp()
             expires_at_unix_time = self._checkout_session_data.get('expires_at', None)
             if expires_at_unix_time is not None:
