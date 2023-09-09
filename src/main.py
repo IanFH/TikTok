@@ -142,7 +142,7 @@ def confirm():
     }
     return render_template('verify.html', data=data)
 
-@app.route('/transfer/confirm/complete', methods=['GET'])
+@app.route('/transfer/confirm/complete', methods=['POST'])
 def complete():
     # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
@@ -170,7 +170,7 @@ def history():
         return redirect(url_for('root'))
     return render_template('history.html')
 
-@app.route('/history/details')
+@app.route('/history/details', methods=['POST'])
 def history_details():
     # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
