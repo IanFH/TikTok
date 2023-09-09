@@ -142,16 +142,16 @@ def confirm():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
-    transfer_amount = request.form.get('transfer_amount', None)
-    recipient_username = request.form.get('recipient_username', None)
-    if transfer_amount is None or recipient_username is None:
+    transfer_amount = request.form.get('amount', None)
+    recipient_phone_number = request.form.get('phone_number', None)
+    if transfer_amount == '' or recipient_phone_number == '':
         return redirect(url_for('transfer'))
     transfer_amount = float(transfer_amount)
     if transfer_amount > user.get_balance():
         return redirect(url_for('transfer', err_msg='Insufficient balance'))
     data = {
-        'recipient_username': request.form['recipient_username'],
-        'transfer_amount': request.form['transfer_amount']
+        'phone_number': recipient_phone_number,
+        'amount': transfer_amount
     }
     return render_template('verify.html', data=data)
 
@@ -162,17 +162,20 @@ def complete():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
-    transfer_amount = request.args.get('transfer_amount', None)
-    recipient_username = request.args.get('recipient_username', None)
-    if transfer_amount is None or recipient_username is None:
+    transfer_amount = request.form.get('amount', None)
+    recipient_phone_number = request.form.get('phone_number', None)
+    if transfer_amount is None or recipient_phone_number is None:
         return redirect(url_for('transfer'))
     transfer_amount = float(transfer_amount)
-    user_recipient = database_handler.fetch_user_data(database_handler, 
-                                                      recipient_username, 
-                                                      User.hash_username(recipient_username))
+    user_recipient = database_handler.fetch_user_data_by_phone(recipient_phone_number)
     curr_datetime = datetime.datetime.now()
     transaction_task = TransactionTask(user.get_uid(), user_recipient[0], transfer_amount, curr_datetime)
     transaction_accumulator.add_transfer_task(transaction_task)
+    data = {
+            "transfer_amount": transfer_amount,
+            "username": user_recipient[1],
+            "balance": round(user.get_balance() - float(transfer_amount), 2)
+        }
     return render_template('complete.html', data=request.form)
 
 @app.route('/history')

@@ -7,13 +7,20 @@
       <div class="modal-content rounded-3 shadow">
         <div class="modal-body p-4 text-center">
           <h5 class="mb-0">Confirm payment?</h5>
-          <p class="mb-0" >Destination Account: {{% data["client_reference_id"] %}}</p>
-          <p class="mb-0" >Amount: {{% data["transfer_amount"] %}}</p>
+          <p class="mb-0" >Destination Account: {{ data["phone_number"] }}</p>
+          <p class="mb-0" >Amount: {{ data["amount"] }}</p>
 
         </div>
+        <div>
+          <form id="postForm" method="POST" action="/transfer/confirm/complete">
+              <input type="hidden" name="phone_number" value="{{ data['phone_number'] }}">
+              <input type="hidden" name="amount" value="{{ data['amount'] }}">
+              <a href="#" onclick="document.getElementById('postForm').submit(); return false;" 
+              class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end">Confirm</a>
+          </form>
+      </div>
         <div class="modal-footer flex-nowrap p-0">
-          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" fdprocessedid="raiwdf"><strong>Yes, confirm</strong></button>
-          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal" fdprocessedid="e0vzkp">Cancel</button>
+          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" href="/transfer" data-bs-dismiss="modal" fdprocessedid="e0vzkp">Cancel</button>
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@
     <!-- Transfer Form -->
     <div class="row">
         <div class="col-md-6">
-            <form>
+            <form action="transfer/confirm" method="POST">
                 </div>
                 <div class="mb-3">
                     <label for="receiverPhoneNumber" class="form-label">Destination Account</label>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">Amount</label>
-                    <input type="number" class="form-control" id="amount" required>
+                    <input type="number" name="amount" class="form-control" id="amount" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Confirm</button>
             </form>

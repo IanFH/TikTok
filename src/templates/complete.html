@@ -9,8 +9,8 @@
           <h1 class="modal-title fs-5">Transfer Successful</h1>
         </div>
         <div class="modal-body py-0">
-          <p class="centre">You have transferred {{ data["transfer_amount"]}} to {{% data["username"] %}}</p>
-          <p class="centre">Your new balance is {{%data["balance]%}}</p>
+          <p class="centre">You have transferred {{ data["transfer_amount"] }} to {{ data["username"] }}</p>
+          <p class="centre">Your new balance is {{ data["balance] }}</p>
         </div>
         <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-3 border-top-0">
           <button type="button" class="btn btn-lg btn-primary" fdprocessedid="n64aog">Continue</button>
