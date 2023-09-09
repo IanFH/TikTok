@@ -1,7 +1,7 @@
 from transaction_task import TransactionTask
 from transaction_queue import TransactionQueue
 from database_handler import DatabaseHandler
-import psycopg2
+import psycopg
 
 
 class TransactionAccumulator:
@@ -66,11 +66,11 @@ class TransactionAccumulator:
             entries = self._process_accounts()
             try:
                 db_handler.bulk_update_balance(entries)
-            except psycopg2.DatabaseError:
+            except psycopg.DatabaseError:
                 failsafe_accumulator._add_transactions(self._curr_tasks)
             try:
                 db_handler.bulk_insert_transactions(self._transaction_history)
-            except psycopg2.DatabaseError:
+            except psycopg.DatabaseError:
                 failsafe_accumulator._add_transactions_history(self._curr_tasks)
             self._accounts = {}
             self._transaction_history = []
@@ -104,20 +104,20 @@ class FailsafeAccumulator:
                 try:
                     db_handler.update_balance(entry)
                     transaction_task.set_recipient_update_success(True)
-                except psycopg2.DatabaseError:
+                except psycopg.DatabaseError:
                     self._failed_tasks.append(transaction_task)
             if transaction_task.get_recipient_update_success():
                 entry = (sender_uid, -1 * amount)
                 try:
                     db_handler.update_balance(entry)
                     transaction_task.set_sender_update_success(True)
-                except psycopg2.DatabaseError:
+                except psycopg.DatabaseError:
                     self._failed_tasks.append(transaction_task)
             if not transaction_task.get_transaction_history_update_success():
                 try:
                     db_handler.insert_transaction(transaction_task.to_row())
                     transaction_task.set_transaction_history_update_success(True)
-                except psycopg2.DatabaseError:
+                except psycopg.DatabaseError:
                     self._failed_tasks.append(transaction_task)
             cnt += 1
         for task in self._failed_tasks:
