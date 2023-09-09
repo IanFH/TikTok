@@ -11,9 +11,10 @@ from env import APP_SK
 from database_handler import DatabaseHandler
 from authenticator import Authenticator
 import datetime
+import os
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=os.path.join(".", "static"))
 app.secret_key = APP_SK
 authenticator = Authenticator()
 database_handler = DatabaseHandler()

@@ -1,28 +1,38 @@
-{% extends "layout.html" %}
+{% extends "layout3.html" %}
 
 {% block content %}
+<section class="py-5">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                
+                <h1 class="mb-4">Transfer Funds <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
+                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                  </svg></h1>
 
-<div class="container mt-5">
-    <h1 class="mb-4">Transfer</h1>
-    
-    <!-- Transfer Form -->
-    <div class="row">
-        <div class="col-md-6">
-            <form action="transfer/confirm" method="POST">
+                <!-- Transfer Form -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <form action="transfer/confirm" method="POST">
+                    </div>
+                    <div class="mb-3">
+                        <label for="receiverPhoneNumber" class="form-label">Destination Account</label>
+                        <input type="number" name="phone_number" class="form-control" id="positiveIntegerInput" min="1"
+                            placeholder="Recipient's Phone Number" required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Please enter a valid phone number</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" name="amount" class="form-control" id="amount" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Confirm</button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="receiverPhoneNumber" class="form-label">Destination Account</label>
-                    <input type="number" name="phone_number" class="form-control" id="positiveIntegerInput" min="1" placeholder="Recipient's Phone Number" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Please enter a valid phone number</div>
-                </div>
-                <div class="mb-3">
-                    <label for="amount" class="form-label">Amount</label>
-                    <input type="number" name="amount" class="form-control" id="amount" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Confirm</button>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+    </div>
+</section>
+
 {% endblock %}

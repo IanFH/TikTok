@@ -3,57 +3,66 @@
 {% block page_title %}LeWallet - Register{% endblock %}
 
 {% block content %}
-<form class="row g-3" action="/register/confirm" method="POST" id="registration_form">
-    <div class="col-md-6">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" name="username" class="form-control" id="username">
-    </div>
-    <div class="col-md-6">
-      <label for="inputPassword4" class="form-label">Password</label>
-      <input type="password" name="password" class="form-control" id="password">
-    </div>
-    <div class="col-md-6">
-        <label for="inputPassword5" class="form-label">Confirm Password</label>
-        <input type="password" name="confirm_password" class="form-control" id="confirm_password">
+<section class="py-5">
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <h1 class="h1">Register</h1>
+        <p class="mb-3"><small>Join us in making personal finance streamlined and accessible for everyone.</small></p>
+        <form class="row g-3" action="/register/confirm" method="POST" id="registration_form">
+          <div class="col-12">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username" required>
+          </div>
+          <div class="col-12">
+            <label for="inputPassword4" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+          </div>
+          <div class="col-12">
+            <label for="inputPassword5" class="form-label">Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control" id="confirm_password" required>
+          </div>
+          <div class="col-12">
+            <label for="inputAddress" class="form-label">IC Number</label>
+            <input type="text" name="id" class="form-control" id="id" required>
+          </div>
+          <div class="col-12">
+
+            <label for="inputPhoneNumber" class="form-label">Phone Number</label>
+            <input type="number" name="phone_number" class="form-control" id="positiveIntegerInput" min="1" required>
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback">Please enter a valid phone number</div>
+          </div>
+
+
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="gridCheck" required>
+              <label class="form-check-label" for="gridCheck">
+                I have read and agree to the Terms & Conditions
+              </label>
+            </div>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-secondary">Submit</button>
+          </div>
+        </form>
       </div>
-    <div class="col-12">
-      <label for="inputAddress" class="form-label">IC Number</label>
-      <input type="text" name="id" class="form-control" id="id">
     </div>
-    <div class="col-12">
-
-        <label for="inputPhoneNumber" class="form-label">Phone Number</label>
-        <input type="number" name="phone_number" class="form-control" id="positiveIntegerInput" min="1">
-        <div class="valid-feedback">Looks good!</div>
-        <div class="invalid-feedback">Please enter a valid phone number</div>
-        <label for="inputAddress" class="form-label">Phone Number</label>
-        <input type="text" name="phone_number" class="form-control" id="phone_number">
-      </div>
+  </div>
+</section>
 
 
-    <div class="col-12">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="gridCheck">
-        <label class="form-check-label" for="gridCheck">
-          I have read and agree to the Terms & Conditions
-        </label>
-      </div>
-    </div>
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary">Sign in</button>
-    </div>
-  </form>
-
-  <script>
-    document.getElementById("registration_form").addEventListener("submit", function(e){
-        e.preventDefault();
-        var password = document.getElementById("password").value;
-        var confirm_password = document.getElementById("confirm_password").value;
-        if (password != confirm_password){
-            alert("Password and Confirm Password do not match");
-        } else {
-            this.submit();
-        }
-    });
-  </script>
-  {% endblock %}
+<script>
+  document.getElementById("registration_form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var password = document.getElementById("password").value;
+    var confirm_password = document.getElementById("confirm_password").value;
+    if (password != confirm_password) {
+      alert("Password and Confirm Password do not match");
+    } else {
+      this.submit();
+    }
+  });
+</script>
+{% endblock %}
