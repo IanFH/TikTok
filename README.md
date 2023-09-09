@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Usage
 ```bash
-python src/main.py
+python main.py
 ```
 
 ## API Used

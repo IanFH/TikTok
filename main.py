@@ -187,6 +187,8 @@ def complete():
             "username": user_recipient[1],
             "balance": round(user.get_balance() - float(transfer_amount), 2)
         }
+    user.set_balance(round(user.get_balance() - float(transfer_amount), 2))
+    session['user'] = user.serialise()
     return render_template('complete.html', data=data)
 
 @app.route('/history')
