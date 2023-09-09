@@ -55,6 +55,23 @@ class DatabaseHandler:
             if result[1] == username:
                 return result
         return None
+    
+    def fetch_user_data_uid(self, uid: int):
+        """
+        Fetches the user data from the database based on username
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = """
+                    SELECT uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no
+                    FROM User_Table
+                    WHERE uid = %s;
+                    """
+        self.cursor.execute(sql_query, (uid, ))
+        results = self.cursor.fetchone()
+        print(f"results: {results}")
+        if len(results) > 0:
+            return results
+        return None
         
 
     def delete(self, uid: int):

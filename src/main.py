@@ -104,8 +104,11 @@ def topup():
 def topup_success():
     transaction_session_id = request.args.get('session_id', None)
     topup_handler = TopUpHandler(transaction_session_id)
-    res = topup_handler.process(transaction_accumulator)
-    if res:
+    uid = topup_handler.process(transaction_accumulator)
+    if uid is not None:
+        user_data = database_handler.fetch_user_data_uid(uid)
+        user = User.from_tuple(user_data)
+        session['user'] = user.serialise()
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
         return render_template('topup_success.html')
