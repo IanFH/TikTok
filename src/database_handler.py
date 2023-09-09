@@ -18,16 +18,20 @@ class DatabaseHandler:
         )
     
     def insert_user(self, username: str, username_hashed: int, 
-                    password_hashed_one: int, password_hashed_two: int):
+                    password_hashed_one: int, password_hashed_two: int,
+                    phone_number: int, balance: float,
+                    registration_timestamp: datetime.datetime, activation_timestamp: datetime.datetime,
+                    ic_no: str):
         """
 
         """
         # TODO: Implement SQL query (Jeff)
         sql_query = """
-                    INSERT INTO User_Table(uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no)
-                    VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO User_Table(username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
-        self.cursor.execute(sql_query, (username, username_hashed, password_hashed_one, password_hashed_two))
+        self.cursor.execute(sql_query, (username, username_hashed, password_hashed_one, password_hashed_two, 
+                                        phone_number, balance, registration_timestamp, activation_timestamp, ic_no))
         self.connection.commit()
 
     
@@ -41,6 +45,8 @@ class DatabaseHandler:
                     FROM User_Table
                     WHERE username_hashed = %s;
                     """
+        print(f"username: {username}")
+        print(f"username hashed: {username_hashed}")
         self.cursor.execute(sql_query, (username_hashed, ))
         results = self.cursor.fetchall()
         print(f"results: {results}")
@@ -204,7 +210,7 @@ if __name__ == "__main__":
     # For testing of queries and execution of one off queries
     db_handler = DatabaseHandler()
     # sql_query = """
-
+    #             DELETE FROM User_Table;
     #             """
     # db_handler.cursor.execute(sql_query)
     # db_handler.connection.commit()

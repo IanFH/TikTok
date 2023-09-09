@@ -37,20 +37,27 @@ def register():
 @app.route('/register/confirm', methods=['POST'])
 def register_confirm():
     # TODO: Create HTML (Ian & Pandu)
+    print(f"phone number: {request.form['phone_number']}")
     if request.form['password'] != request.form['confirm_password']:
         return redirect(url_for('register', err_msg='Passwords do not match'))
     if User.username_exists(database_handler, request.form['username']):
         return redirect(url_for('register', err_msg='Username already exists'))
     return render_template('register_confirm.html', data=request.form)
 
-@app.route('/register/callback', methods=['POST'])
+@app.route('/register/callback', methods=['GET','POST'])
 def register_callback():
-    username = request.form['username']
-    password = request.form['password']
-    ic_no = request.form['ic_no']
-    user = User.create_user(username, password, ic_no)
+    print("CALLBACK")
+    username = request.form['username'].strip()
+    password = request.form['password'].strip()
+    phone_number = request.form['phone_number']
+    print(f"phone_number: {phone_number}")
+    print(f"type: {type(phone_number)}")
+    ic_no = request.form['id']
+    user = User.create_user(username, password, phone_number, ic_no)
+    print(user)
     user.insert_to_database(database_handler)
-    return redirect(url_for("root"))
+    print("INSERTED")
+    return redirect(url_for("login"))
 
 @app.route('/login')
 def login():
@@ -63,7 +70,7 @@ def login_callback():
     Handles the login process
     """
     login_handler = LoginHandler(request.form['username'], request.form['password'])
-    user = login_handler.login()
+    user = login_handler.login(database_handler)
     if user:
         session['user'] = user.serialise()
         return redirect(url_for('home'))
