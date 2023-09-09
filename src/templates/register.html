@@ -22,7 +22,7 @@
     </div>
     <div class="col-12">
         <label for="inputPhoneNumber" class="form-label">Phone Number</label>
-        <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Enter phone digits" pattern="[0-9]*" required>
+        <input type="number" name="phone_number" class="form-control" id="positiveIntegerInput" min="1">
         <div class="valid-feedback">Looks good!</div>
         <div class="invalid-feedback">Please enter a valid phone number</div>
     </div>
