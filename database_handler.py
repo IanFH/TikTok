@@ -261,21 +261,25 @@ class DatabaseHandler:
 if __name__ == "__main__":
     # For testing of queries and execution of one off queries
     db_handler = DatabaseHandler()
+
     # sql_query = """
     #             DELETE FROM User_Table
     #             WHERE uid = 10;
     #             """
     # db_handler.cursor.execute(sql_query)
-    # db_handler.connection.commit()
+    db_handler.connection.commit()
 
     # To see what is in the db
     db_handler.list_schema()
 
-
-    # sql_query = """
+        # sql_query = """
     #             INSERT INTO Credential_Table(birthdate, ic_no, address)
     #             VALUES (%s, %s, %s)
     #             """
-    # db_handler.cursor.execute(sql_query, (datetime.datetime(2000, 1, 1), "S1234567A", 
-    #                                       "Blk 1-3-I, Prince Greoge's Park, Singapore"))
+    # db_handler.cursor.execute(sql_query, (datetime.datetime(1969, 1, 1), "S1010101A", 
+    #                                     "Blk 1-7-K, Prince Greoge's Park, Singapore"))
+
+
+    
+
 
