@@ -3,20 +3,27 @@
 {% block page_title %}LeWallet - Registration Confirmed{% endblock %}
 
 {% block content %}
-<section class="container mt-5">
-    <div>
-        <h1>Registration Confirmed</h1>
-        <h3>You have registered under the username {{ data["username"] }}</h3>
-    </div>
-    <div>
-        <form id="postForm" method="POST" action="/register/callback">
-            <input type="hidden" name="username" value="{{ data['username'] }}">
-            <input type="hidden" name="password" value="{{ data['password'] }}">
-            <input type="hidden" name="id" value="{{ data['id']  }}">
-            <input type="hidden" name="phone_number" value="{{ data['phone_number'] }}">
-            <a href="/register/callback" onclick="document.getElementById('postForm').submit(); return false;" 
-            class="btn btn-primary">Confirm</a>
-        </form>
+<section class="py-5">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div>
+                    <h1>Registration Confirmed</h1>
+                    <h3>You have registered under the username {{ data["username"] }}</h3>
+                </div>
+                <div>
+                    <form id="postForm" method="POST" action="/register/callback">
+                        <input type="hidden" name="username" value="{{ data['username'] }}">
+                        <input type="hidden" name="password" value="{{ data['password'] }}">
+                        <input type="hidden" name="id" value="{{ data['id']  }}">
+                        <input type="hidden" name="phone_number" value="{{ data['phone_number'] }}">
+                        <a href="/register/callback" onclick="document.getElementById('postForm').submit(); return false;" 
+                        class="btn btn-primary">Confirm</a>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
 {% endblock %}

@@ -92,6 +92,7 @@ def home():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
+    user = user.update(database_handler)
     session['user'] = user.serialise()
     data = {
         "balance": user.get_balance(),

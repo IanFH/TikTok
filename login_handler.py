@@ -8,8 +8,8 @@ class LoginHandler:
         self._raw_username = raw_username
         self._raw_password = raw_password
 
-    def login(self, db_hanlder: DatabaseHandler):
-        user_data = db_hanlder.fetch_user_data(self._raw_username, User.hash_username(self._raw_username))
+    def login(self, db_handler: DatabaseHandler):
+        user_data = db_handler.fetch_user_data(self._raw_username, User.hash_username(self._raw_username))
         user = User.from_tuple(user_data)
         curr_hashed_password_one = self._hash_password_one()
         curr_hashed_password_two = self._hash_password_two()

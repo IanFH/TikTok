@@ -209,6 +209,11 @@ class User:
         return User(None, username, username_hashed, password_hashed_one, 
                     password_hashed_two, balance=0, 
                     phone_number=phone_number, ic_no=ic_no)
+    
+    def update(self, db_handler: DatabaseHandler):
+        user_data = db_handler.fetch_user_data_uid(self._uid)
+        user = User.from_tuple(user_data)
+        return user
         
     def serialise(self):
         return {
