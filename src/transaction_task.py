@@ -4,8 +4,7 @@ class TransactionTask:
         self._sender_uid = sender_uid
         self._recipient_uid = recipient_uid
         if (amount <= 0):
-            # TODO: Remove in production! (Marcus)
-            print("Yall broke mfs")
+            print("Insufficient balance")
         else:
             self._amount = amount
         self._date = date
@@ -21,7 +20,7 @@ class TransactionTask:
 
     def get_amount(self) -> float:
         return self._amount
-    
+
     def get_date(self) -> str:
         return self._date
     
