@@ -1,5 +1,6 @@
 import psycopg
 from env import DB_USER, DB_PASS, DB_HOST, DB_PORT
+import datetime
 
 
 class DatabaseHandler:
@@ -19,20 +20,26 @@ class DatabaseHandler:
     def insert_user(self, username: str, username_hashed: int, 
                     password_hashed_one: int, password_hashed_two: int):
         """
-        Inserts a user into the database
+
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """
+                    INSERT INTO User_Table(uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no)
+                    VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """
         self.cursor.execute(sql_query, (username, username_hashed, password_hashed_one, password_hashed_two))
         self.connection.commit()
 
     
     def fetch_user_data(self, username: str, username_hashed: int):
         """
-        Fetches the data of a user from the database (exluding contacts and favourite contacts)
+
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """
+                    SELECT uid, username, username_hashed)
+                    FROM User_Table;
+                    """
         self.cursor.execute(sql_query, (username_hashed, ))
         results = self.cursor.fetchall()
         # assuming that the username is in position 1
@@ -44,29 +51,40 @@ class DatabaseHandler:
 
     def delete(self, uid: int):
         """
-        Deletes a user from the database based on uid
+
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """
+                    DELETE FROM User_Table
+                    WHERE uid = %s;
+                    """
         self.cursor.execute(sql_query, (uid, ))
         self.connection.commit()
 
     def update_password(self, uid: int, password_hashed_one: int, password_hashed_two: int):
         """
-        Updates the password of a user in the database based on uid
+
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """        
+                    UPDATE User_Table
+                    SET password_hashed_one = %s, password_hashed_two = %s
+                    WHERE uid = %s;
+                    """
         self.cursor.execute(sql_query, (uid, password_hashed_one, password_hashed_two))
         self.connection.commit()
 
-    def update_balance(self, uid: int, balance: float):
+    def update_balance(self, uid: int, tran_amt: float):
         """
         Updates the balance of a user in the database based on uid
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
-        self.cursor.execute(sql_query, (uid, balance))
+        sql_query = """
+                    UPDATE User_Table
+                    SET balance = balance + %s
+                    WHERE uid = %s
+                    """
+        self.cursor.execute(sql_query, (tran_amt, uid))
         self.connection.commit()
 
     def bulk_update_balance(self, entries: list[int, float]):
@@ -75,40 +93,47 @@ class DatabaseHandler:
         """
          # TODO: modify table name if necessary (Jeff)
         sql_query = """
-                    UPDATE users
+                    UPDATE User_Table
                     SET balance = balance + %s
                     WHERE uid = %s
                     """
         self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
-    def insert_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: str):
+    def insert_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: datetime.datetime):
         """
         Adds a transaction to the database
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """
+                    INSERT INTO Transaction_Table(tran_id, tran_amt, recepient_id, sender_id, tran_timestamp)
+                    VALUES (NULL, %s, %s, %s, %s); 
+                    """
         self.cursor.execute(sql_query, (sender_uid, receiver_uid, amount, date))
         self.connection.commit()
     
-    def bulk_insert_transactions(self, entries: list[int, int, float, str]):
+    def bulk_insert_transactions(self, entries: list[int, int, float, datetime.datetime]):
         """
         Adds multiple transactions to the database
         """
         # TODO: modify table name if necessary (Jeff)
         sql_query = """
-                    INSERT INTO transactions VALUES (%s, %s, %s, %s)
+                    INSERT INTO Transaction_Table VALUES (%s, %s, %s, %s)
                     """
         self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
-    def fetch_transactions(self, uid: int, start_date: str, end_date: str):
+    def fetch_transactions(self, uid: int, start_date: datetime.datetime, end_date: datetime.datetime):
         """
         Fetches the transactions of a user from the database
         Each transaction is a tuple of (sender_uid, receiver_uid, amount, date)
         """
         # TODO: Implement SQL query (Jeff)
-        sql_query = ''
+        sql_query = """
+                    SELECT tran_id, tran_amt, recepient_id, sender_id, tran_timestamp
+                    FROM Transaction_Table
+                    WHERE uid = %s AND tran_timestamp >= %s AND tran_timestamp <= %s;
+                    """
         self.cursor.execute(sql_query, (uid, start_date, end_date))
         results = self.cursor.fetchall()
         return results
@@ -177,7 +202,7 @@ if __name__ == "__main__":
     # For testing of queries and execution of one off queries
     db_handler = DatabaseHandler()
     # sql_query = """
-    #             <Some Query>
+
     #             """
     # db_handler.cursor.execute(sql_query)
     # db_handler.connection.commit()

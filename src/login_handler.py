@@ -16,13 +16,11 @@ class LoginHandler:
         hashed_password_one = user.get_password_hashed_one()
         hashed_password_two = user.get_password_hashed_two()
         if (curr_hashed_password_one == hashed_password_one) and (curr_hashed_password_two == hashed_password_two):
-            return 
+            return user 
         return None
     
     def _hash_password_one(self):
-        # TODO: Implement hashing algorithm (Joseph)
-        return 0
+        return User.hash_password_one(self._raw_password)
 
     def _hash_password_two(self):
-        # TODO: Implement hashing algorithm (Joseph)
-        return 1
+        return User.hash_password_two(self._raw_password)

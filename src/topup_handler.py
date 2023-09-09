@@ -7,7 +7,7 @@ from transaction_accumulator import TransactionAccumulator
 stripe.api_key = STRIPE_SK
 
 
-class TransactionHandler:
+class TopUpHandler:
 
     def __init__(self, transaction_session_id: str) -> None:
         self._transaction_session_id = transaction_session_id
@@ -17,9 +17,14 @@ class TransactionHandler:
         self._amount_total = None
 
     def _retrieve_checkout_session(self) -> None:
-        self._checkout_session_data = stripe.checkout.Session.retrieve(self._transaction_session_id)
+        try:
+            self._checkout_session_data = stripe.checkout.Session.retrieve(self._transaction_session_id)
+        except stripe.error.InvalidRequestError:
+            self._checkout_session_data = None
 
     def _validate_checkout_session(self) -> bool:
+        if self._checkout_session_data is None:
+            return False
         payment_status = self._checkout_session_data.get('payment_status', None)
         self._uid = self._checkout_session_data.get('client_reference_id', None)
         self._amount_total = self._checkout_session_data.get('amount_total', None)
@@ -32,5 +37,6 @@ class TransactionHandler:
           
     def process(self, transaction_accumulator: TransactionAccumulator) -> bool:
         self._retrieve_checkout_session()
+        if not self._validate_checkout_session():
+            return False
         return transaction_accumulator.add_topup_task(self._uid, self._amount_total, self._transaction_session_id)
-        
