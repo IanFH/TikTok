@@ -8,16 +8,16 @@
     <thead>
       <tr>
         <th scope="col">Name</th>
-        <th scope="col">Date</th>
+        <th scope="col">Timestamp</th>
         <th scope="col">Amount</th>
       </tr>
     </thead>
     <tbody>
       {% for transaction in transaction_history %}
       <tr>
-        <td>{{ transaction["Name"]}}</td>
-        <td>{{ transaction["Date"]}}</td>
-        <td>{{ transaction["Amount"]}}</td>
+        <td>{{ transaction["name"]}}</td>
+        <td>{{ transaction["timestamp"]}}</td>
+        <td>{{ transaction["amount"]}}</td>
       </tr>
       {% endfor %}
     </tbody>

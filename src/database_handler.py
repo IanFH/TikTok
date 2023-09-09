@@ -79,7 +79,6 @@ class DatabaseHandler:
                     """
         self.cursor.execute(sql_query, (phone_number, ))
         results = self.cursor.fetchone()
-        print(f"results: {results}")
         # assuming that the username is in position 1
         return results
     
@@ -193,9 +192,9 @@ class DatabaseHandler:
         sql_query = """
                     SELECT tran_id, tran_amt, recepient_id, sender_id, tran_timestamp
                     FROM Transaction_Table
-                    WHERE uid = %s AND tran_timestamp >= %s AND tran_timestamp <= %s;
+                    WHERE (sender_id = %s OR recepient_id = %s) AND tran_timestamp >= %s AND tran_timestamp <= %s;
                     """
-        self.cursor.execute(sql_query, (uid, start_date, end_date))
+        self.cursor.execute(sql_query, (uid, uid, start_date, end_date))
         results = self.cursor.fetchall()
         return results
 
