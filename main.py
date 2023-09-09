@@ -30,18 +30,15 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 @app.route('/')
 def root():
-    # TODO: Create HTML (Ian & Pandu)
     return render_template('index.html')
 
 @app.route('/register')
 def register():
-    # TODO: Create HTML (Ian & Pandu)
     err_msg = request.args.get('err_msg', None)
     return render_template('register.html', err_msg=err_msg)
 
 @app.route('/register/confirm', methods=['POST'])
 def register_confirm():
-    # TODO: Create HTML (Ian & Pandu)
     phone_number = request.form['phone_number'].strip()
     if phone_number == '' or not phone_number.isnumeric():
         return redirect(url_for('register', err_msg='Invalid phone number'))
@@ -55,21 +52,17 @@ def register_confirm():
 
 @app.route('/register/callback', methods=['POST'])
 def register_callback():
-    print("CALLBACK")
     username = request.form['username'].strip()
     password = request.form['password'].strip()
     phone_number = int(request.form['phone_number'].strip())
     ic_no = request.form['id'].strip()
     user = User.create_user(username, password, phone_number, ic_no)
-    print(user)
     user.insert_to_database(database_handler)
     authenticator.add_user_credentials(UserCredentials(ic_no, ))
-    print("INSERTED")
     return redirect(url_for("login"))
 
 @app.route('/login')
 def login():
-    # TODO: Create HTML (Ian & Pandu)
     return render_template('login.html')
 
 @app.route('/login/callback', methods=['POST'])
@@ -87,7 +80,6 @@ def login_callback():
 
 @app.route('/home')
 def home():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -121,8 +113,6 @@ def topup_success():
         user = User.from_tuple(user_data)
         user.set_balance(round(user.get_balance() + topup_amount, 2))
         session['user'] = user.serialise()
-        # TODO: Create HTML (Ian & Pandu)
-        print(f"Success!")
         data = {
             "balance": user.get_balance()
         }
@@ -132,7 +122,6 @@ def topup_success():
 
 @app.route('/topup/fail')
 def topup_fail():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -140,7 +129,6 @@ def topup_fail():
 
 @app.route('/transfer')
 def transfer():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -149,7 +137,6 @@ def transfer():
 
 @app.route('/transfer/confirm', methods=['POST'])
 def confirm():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -169,7 +156,6 @@ def confirm():
 
 @app.route('/transfer/confirm/complete', methods=['POST'])
 def complete():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -194,7 +180,6 @@ def complete():
 
 @app.route('/history')
 def history():
-    # TODO: Create HTML (Ian & Pandu)
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
@@ -202,7 +187,6 @@ def history():
 
 @app.route('/history/details', methods=['POST'])
 def history_details():
-    # TODO: Create HTML (Ian & Pandu)
     HTML_DATE_FORMAT = "%Y-%m-%d"
     user_serialised = session.get('user', None)
     if user_serialised is None:

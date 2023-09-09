@@ -38,12 +38,3 @@ class TransactionQueue:
             result = self.curr.getVal()
             self.curr = self.curr.getNext()
             return result
-
-
-if __name__ == "__main__":
-    transaction_queue = TransactionQueue()
-    transaction_task = TransactionTask(1, 2, 3)
-    transaction_queue.enqueue(transaction_task)
-    transaction_queue.enqueue(transaction_task)
-    transaction_queue.enqueue(transaction_task)
-    print(transaction_queue.dequeue().get_amount())

@@ -33,7 +33,6 @@ class TransactionAccumulator:
         cnt = 0
         while self._transaction_queue.curr is not None and cnt < self._MAX_PER_UPDATE:
             transaction_task = self._transaction_queue.dequeue()
-            print(transaction_task)
             self._curr_tasks.append(transaction_task)
             sender_uid = transaction_task.get_sender_uid()
 
@@ -128,15 +127,3 @@ class FailsafeAccumulator:
     def clear_used_transaction_session_ids(self):
         self._used_transaction_session_ids = set()
 
-
-if __name__ == "__main__":
-    t_accumulator = TransactionAccumulator()
-    task1 = TransactionTask(1, 2, 100)
-    task2 = TransactionTask(1, 3, 100)
-    task3 = TransactionTask(10, 1, 30)
-    t_accumulator.addTransaction(task1)
-    t_accumulator.addTransaction(task2)
-    t_accumulator.addTransaction(task3)
-    t_accumulator.addTransaction(task1)
-    t_accumulator.accumulateTransactions()
-    print(t_accumulator._accounts)

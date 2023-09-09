@@ -124,14 +124,10 @@ class User:
             return False
         else:
             curr_timestamp = datetime.datetime.now()
-            print("INSERTING...")
-            # (uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, 
-            #  balance, registration_timestamp, activation_timestamp, ic_no)
             db_handler.insert_user(self._username, self._username_hashed, 
                                    self._password_hashed_one, self._password_hashed_two, 
                                    self._phone_number, self._balance, curr_timestamp, None,
                                    self._ic_no)
-            print("INSERTED")
             return True
         
     def activate(self, db_handler: DatabaseHandler):
