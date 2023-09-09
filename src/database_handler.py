@@ -70,6 +70,24 @@ class DatabaseHandler:
                 return result
         return None
     
+    def fetch_user_data_by_phone(self, phone_number: int):
+        """
+        Fetches the user data from the database based on username
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = """
+                    SELECT uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no
+                    FROM User_Table
+                    WHERE phone_no = %s;
+                    """
+        self.cursor.execute(sql_query, (phone_number, ))
+        results = self.cursor.fetchone()
+        print(f"results: {results}")
+        # assuming that the username is in position 1
+        if len(results) > 0:
+            return results
+        return None
+    
     def fetch_user_data_uid(self, uid: int):
         """
         Fetches the user data from the database based on username

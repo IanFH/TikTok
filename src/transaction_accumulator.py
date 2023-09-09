@@ -26,9 +26,8 @@ class TransactionAccumulator:
             return True
         return False
 
-    def add_transfer_task(self, sender_uid: int, recipient_uid: int, 
-                          amount: float, date: datetime.datetime):
-        self._add_transaction(TransactionTask(sender_uid, recipient_uid, amount, date))
+    def add_transfer_task(self, transaction_task: TransactionTask):
+        self._add_transaction(transaction_task)
 
     def _accumulate_transactions(self):
         cnt = 0
