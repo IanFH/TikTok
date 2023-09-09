@@ -146,7 +146,36 @@ class User:
                                 db_handler: DatabaseHandler, 
                                 start_date: datetime.datetime, 
                                 end_date: datetime.datetime):
-        return db_handler.fetch_transactions(self._uid, start_date, end_date)
+        history = db_handler.fetch_transactions(self._uid, start_date, end_date)
+        output = []
+        for transaction in history:
+            amount = transaction[1]
+            recipient_id = transaction[2]
+            sender_id = transaction[3]
+            timestamp = transaction[4]
+            if sender_id == -1:
+                output.append(
+                    {
+                        'amount': amount,
+                        'name': "Top-Up",
+                        'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                )
+            else:
+                if sender_id == self._uid:
+                    id_ = recipient_id
+                else:
+                    id_ = sender_id
+                recipient = db_handler.fetch_user_data_uid(id_)
+                name = recipient[1]
+                output.append(
+                    {
+                        'amount': amount,
+                        'name': name,
+                        'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                )
+        return output
     
     @staticmethod
     def hash_password_two(password: str):

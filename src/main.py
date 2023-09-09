@@ -204,7 +204,6 @@ def history_details():
     end_date = datetime.datetime.strptime(end_date, HTML_DATE_FORMAT)
     user = User.deserialise(session['user'])
     transaction_history = user.get_transaction_history(database_handler, start_date, end_date)
-    print(transaction_history)
     return render_template('history_details.html', transaction_history=transaction_history)
 
 @app.route('/logout')
