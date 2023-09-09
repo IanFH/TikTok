@@ -68,14 +68,14 @@ class TransactionAccumulator:
         self._accumulate_transactions()
         if len(self._accounts) > 0:
             entries = self._process_accounts()
-            # try:
-            db_handler.bulk_update_balance(entries)
-            # except psycopg.errors.Error:
-            # failsafe_accumulator.add_task(self._curr_tasks)
-            # try:
-            db_handler.bulk_insert_transactions(self._transaction_history)
-            # except psycopg.errors.Error:
-            # failsafe_accumulator.add_task(self._curr_tasks)
+            try:
+                db_handler.bulk_update_balance(entries)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
+            try:
+                db_handler.bulk_insert_transactions(self._transaction_history)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
             self._accounts = {}
             self._transaction_history = []
     
@@ -106,7 +106,6 @@ class FailsafeAccumulator:
             recipient_uid = transaction_task.get_recipient_uid()
             amount = transaction_task.get_amount()
             if transaction_task.get_sender_update_success():
-                #TODO: make balance absolute not relative
                 entry = (recipient_uid, amount)
                 try:
                     db_handler.update_balance(entry)
