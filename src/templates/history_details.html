@@ -1,0 +1,26 @@
+{% extends "layout3.html" %}
+
+{% block page_title %}LeWallet - Transaction History{% endblock %}
+
+{% block content %}
+<section class="container mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Date</th>
+        <th scope="col">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transaction_history %}
+      <tr>
+        <td>{{ transaction["Name"]}}</td>
+        <td>{{ transaction["Date"]}}</td>
+        <td>{{ transaction["Amount"]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

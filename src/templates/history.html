@@ -1,35 +1,27 @@
-{extends "layout.html"}
+{% extends "layout3.html" %}
 
 {% block page_title %}LeWallet - Transaction History{% endblock %}
 
 {% block content %}
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
+<section class="container mt-5">
+  <div>
+    <h1>Transaction History</h1>
+    <p><em>Insert Period of Transaction</em></p>
+
+    <!--Select Period of Transaction-->
+    <form action="/history/details" method="POST">
+      <div class="mb-3">
+        <label class="form-label h3" for="start_date">Start Date:</label>
+        <input class="form-label" type="date" name="start_date" placeholder="dd-mm-yyyy" value="" min="1997-01-01" max="2030-12-31">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label h3" for="end_date">End Date:</label>
+        <input type="date" name="end_date" placeholder="dd-mm-yyyy" value="" min="1997-01-01" max="2030-12-31">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</section>
 {% endblock %}
