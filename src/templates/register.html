@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% block page_title %}LeWallet - Register{% endblock %}
+
 {% block content %}
 <form class="row g-3" action="/register" method="POST">
     <div class="col-md-6">
@@ -18,6 +20,10 @@
       <label for="inputAddress" class="form-label">IC Number</label>
       <input type="text" name="id" class="form-control" id="id">
     </div>
+    <div class="col-12">
+        <label for="inputAddress" class="form-label">Phone Number</label>
+        <input type="text" name="phone_number" class="form-control" id="phone_number">
+      </div>
 
     <div class="col-12">
       <div class="form-check">
