@@ -101,24 +101,23 @@ def topup():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
-    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}"
-    print(url)
-    url = urlparse(f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}").geturl()
-    print(url)
+    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?prefilled_email=test%40gmail.com&client_reference_id={user.get_uid()}"
+    url = urlparse(url).geturl()
     return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
     transaction_session_id = request.args.get('session_id', None)
     topup_handler = TopUpHandler(transaction_session_id)
-    uid = topup_handler.process(transaction_accumulator)
+    uid, topup_amount = topup_handler.process(transaction_accumulator)
     if uid is not None:
         user_data = database_handler.fetch_user_data_uid(uid)
         user = User.from_tuple(user_data)
+        user.set_balance(round(user.get_balance() + topup_amount, 2))
         session['user'] = user.serialise()
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
-        return render_template('topup_success.html')
+        return render_template('topup_success.html', user=user)
     else:
         return redirect(url_for('topup_fail'))
 
@@ -205,6 +204,7 @@ def history_details():
     end_date = datetime.datetime.strptime(end_date, HTML_DATE_FORMAT)
     user = User.deserialise(session['user'])
     transaction_history = user.get_transaction_history(database_handler, start_date, end_date)
+    print(transaction_history)
     return render_template('history_details.html', transaction_history=transaction_history)
 
 @app.route('/logout')
