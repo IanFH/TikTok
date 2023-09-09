@@ -93,7 +93,11 @@ def home():
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
     session['user'] = user.serialise()
-    return render_template('home.html', user=user)
+    data = {
+        "balance": user.get_balance(),
+        "username": user.get_username()
+    }
+    return render_template('home.html', data=data)
 
 @app.route('/topup')
 def topup():
@@ -118,7 +122,10 @@ def topup_success():
         session['user'] = user.serialise()
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
-        return render_template('topup_success.html', user=user)
+        data = {
+            "balance": user.get_balance()
+        }
+        return render_template('topup_success.html', data=data)
     else:
         return redirect(url_for('topup_fail'))
 
