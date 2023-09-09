@@ -131,7 +131,7 @@ class User:
     def activate(self, db_handler: DatabaseHandler):
         curr_timestamp = datetime.datetime.now()
         try:
-            db_handler.activate_user(self._uid, curr_timestamp)
+            db_handler.bulk_activate_user(self._uid, curr_timestamp)
             return
         except psycopg.errors.Error:
             return False

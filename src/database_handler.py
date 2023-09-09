@@ -34,6 +34,20 @@ class DatabaseHandler:
                                         phone_number, balance, registration_timestamp, activation_timestamp, ic_no))
         self.connection.commit()
 
+    def fetch_creds(self, ic_number: str):
+        """
+        name: str, birthday: datetime, identification_num: int, address: str
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = """
+                    SELECT ic_no, birthdate, address
+                    FROM Credential_Table
+                    WHERE ic_no = %s;
+                    """
+        self.cursor.execute(sql_query, (ic_number, ))
+        results = self.cursor.fetchone()
+        return results
+
     
     def fetch_user_data(self, username: str, username_hashed: int):
         """
@@ -110,6 +124,19 @@ class DatabaseHandler:
                     WHERE uid = %s
                     """
         self.cursor.execute(sql_query, (tran_amt, uid))
+        self.connection.commit()
+
+    def bulk_activate_user(self, entries: list[datetime.datetime, str]):
+        """
+
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = """        
+                    UPDATE User_Table
+                    SET activation_timestamp = %s
+                    WHERE ic_no = %s;
+                    """
+        self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
     def bulk_update_balance(self, entries: list[int, float]):
@@ -227,12 +254,20 @@ if __name__ == "__main__":
     # For testing of queries and execution of one off queries
     db_handler = DatabaseHandler()
     # sql_query = """
-    #             UPDATE User_Table
-    #             SET balance = 0
-    #             WHERE uid = 2; 
+    #             DELETE FROM User_Table
+    #             WHERE uid = 10;
     #             """
     # db_handler.cursor.execute(sql_query)
     # db_handler.connection.commit()
 
     # To see what is in the db
     db_handler.list_schema()
+
+
+    # sql_query = """
+    #             INSERT INTO Credential_Table(birthdate, ic_no, address)
+    #             VALUES (%s, %s, %s)
+    #             """
+    # db_handler.cursor.execute(sql_query, (datetime.datetime(2000, 1, 1), "S1234567A", 
+    #                                       "Blk 1-3-I, Prince Greoge's Park, Singapore"))
+
