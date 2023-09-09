@@ -29,3 +29,10 @@ python main.py
     - Used to create the web server
 - Stripe (https://stripe.com/docs/api)
     - Used to handle payment
+
+## Testing Web App Procedure (Creating Account)
+- Choose a unique user name, password and phone number
+- Use one of the following NRICs
+    - ["S1111111A", "S000000A", "S222222A", "S1010101A"]
+    - Each of the NRIC can only be used once
+    - This is in compliance to our background authenticator
