@@ -59,11 +59,8 @@ class DatabaseHandler:
                     FROM User_Table
                     WHERE username_hashed = %s;
                     """
-        print(f"username: {username}")
-        print(f"username hashed: {username_hashed}")
         self.cursor.execute(sql_query, (username_hashed, ))
         results = self.cursor.fetchall()
-        print(f"results: {results}")
         # assuming that the username is in position 1
         for result in results:
             if result[1] == username:
@@ -84,9 +81,7 @@ class DatabaseHandler:
         results = self.cursor.fetchone()
         print(f"results: {results}")
         # assuming that the username is in position 1
-        if len(results) > 0:
-            return results
-        return None
+        return results
     
     def fetch_user_data_uid(self, uid: int):
         """
@@ -100,11 +95,7 @@ class DatabaseHandler:
                     """
         self.cursor.execute(sql_query, (uid, ))
         results = self.cursor.fetchone()
-        print(f"results: {results}")
-        if len(results) > 0:
-            return results
-        return None
-        
+        return results
 
     def delete(self, uid: int):
         """

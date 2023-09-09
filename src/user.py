@@ -102,15 +102,21 @@ class User:
         return self._phone_number
     
     @staticmethod
-    def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
+    def from_tuple(user_tuple: tuple):
         uid = user_tuple[0]
         username = user_tuple[1]
         username_hashed = user_tuple[2]
         password_hashed_one = user_tuple[3]
         password_hashed_two = user_tuple[4]
-        balance = user_tuple[5]
+        phone_number = user_tuple[5]
+        balance = user_tuple[6]
+        registration_timestamp = user_tuple[7]
+        activation_timestamp = user_tuple[8]
+        ic_no = user_tuple[9]
         return User(uid, username, username_hashed, 
-                    password_hashed_one, password_hashed_two, balance)
+                    password_hashed_one, password_hashed_two, balance, ic_no, 
+                    registration_timestamp, 
+                    activation_timestamp, phone_number)
 
     def insert_to_database(self, db_handler: DatabaseHandler):
         result = db_handler.fetch_user_data(self._username, self._username_hashed)
@@ -157,8 +163,13 @@ class User:
         return abs(hash(username)) % (2 ** 31 - 1)
 
     @staticmethod
-    def username_exists(db_handler: DatabaseHandler, username: str):
-        result = db_handler.fetch_user_data(username, User.hash_username(username))
+    def phone_number_exists(db_handler: DatabaseHandler, phone_number: int):
+        result = db_handler.fetch_user_data_by_phone(phone_number)
+        return result is not None
+    
+    @staticmethod
+    def username_exists(db_handler: DatabaseHandler, username: str, username_hashed: int):
+        result = db_handler.fetch_user_data(username, username_hashed)
         return result is not None
     
     @staticmethod

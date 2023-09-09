@@ -41,14 +41,18 @@ def register():
 @app.route('/register/confirm', methods=['POST'])
 def register_confirm():
     # TODO: Create HTML (Ian & Pandu)
-    print(f"phone number: {request.form['phone_number']}")
+    phone_number = request.form['phone_number'].strip()
+    if phone_number == '' or not phone_number.isnumeric():
+        return redirect(url_for('register', err_msg='Invalid phone number'))
     if request.form['password'] != request.form['confirm_password']:
         return redirect(url_for('register', err_msg='Passwords do not match'))
-    if User.username_exists(database_handler, request.form['username']):
+    if User.phone_number_exists(database_handler, phone_number):
+        return redirect(url_for('register', err_msg='Phone number already exists'))
+    if User.username_exists(database_handler, request.form['username'], User.hash_username(request.form['username'])):
         return redirect(url_for('register', err_msg='Username already exists'))
     return render_template('register_confirm.html', data=request.form)
 
-@app.route('/register/callback', methods=['GET','POST'])
+@app.route('/register/callback', methods=['POST'])
 def register_callback():
     print("CALLBACK")
     username = request.form['username'].strip()
