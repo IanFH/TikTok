@@ -15,6 +15,7 @@ class BgTaskManager:
         self.database_handler = database_handler
         self.add_bulk_update_transaction_job()
         self.add_update_used_transaction_session_id_job()
+        self.add_failsafe_job()
 
     def start(self):
         self.background_scheduler.start()
@@ -36,4 +37,13 @@ class BgTaskManager:
                       'interval',
                       seconds=300,
                       args=())
-    
+        
+    def add_failsafe_job(self):
+        self._add_job(self.failsafe_accumulator.process_transaction_tasks_seq,
+                      'interval',
+                      seconds=300,
+                      args=(self.database_handler, ))
+        
+    def add_registration_check_job(self):
+        # TODO: Implement this (Joseph)
+        pass
