@@ -16,6 +16,9 @@ class TransactionTask:
         self._recipient_update_success = False
         self._transaction_history_update_success = False
 
+    def __repr__(self) -> str:
+        return f"TransactionTask(sender_uid={self._sender_uid}, recipient_uid={self._recipient_uid}, amount={self._amount}, date={self._date})"
+
     def get_sender_uid(self) -> int:
         return self._sender_uid
 

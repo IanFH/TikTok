@@ -29,19 +29,19 @@ class BgTaskManager:
     def add_bulk_update_transaction_job(self, ):
         self._add_job(self.transaction_accumulator.process_transaction_tasks,
                       'interval',
-                      seconds=60,
+                      seconds=3,
                       args=(self.database_handler, self.failsafe_accumulator))
         
     def add_update_used_transaction_session_id_job(self):
         self._add_job(self.transaction_accumulator.clear_used_transaction_session_ids,
                       'interval',
-                      seconds=300,
+                      seconds=6,
                       args=())
         
     def add_failsafe_job(self):
         self._add_job(self.failsafe_accumulator.process_transaction_tasks_seq,
                       'interval',
-                      seconds=300,
+                      seconds=10,
                       args=(self.database_handler, ))
         
     def add_registration_check_job(self):
