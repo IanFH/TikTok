@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block page_title %}LeWallet - Registration Confirmed{% endblock %}
+
+{% block content %}
+<section class="container mt-5">
+    <div>
+        <h1>Registration Confirmed</h1>
+        <h3>You have registered under the username {% data["username"] %}</h3>
+    </div>
+    <div>
+        <a href="/login" class="btn btn-primary">Login Here</a>
+    </div>
+</section>
