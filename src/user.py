@@ -10,7 +10,8 @@ class User:
                  password_hashed_one: int = None, password_hashed_two: int = None,
                  balance: float = None, ic_no: str = None,
                  registration_timestamp: datetime.datetime = None,
-                 activation_timestamp: datetime.datetime = None):
+                 activation_timestamp: datetime.datetime = None,
+                 phone_number: int = None):
         self._uid = uid
         self._username = username
         self._username_hashed = username_hashed
@@ -22,6 +23,7 @@ class User:
         self._ic_no = ic_no
         self._registration_timestamp = registration_timestamp
         self._activation_timestamp = activation_timestamp
+        self._phone_number = phone_number
 
     def set_uid(self, uid: int):
         self._uid = uid
@@ -56,6 +58,9 @@ class User:
     def set_activation_timestamp(self, activation_timestamp: datetime.datetime):
         self._activation_timestamp = activation_timestamp
 
+    def set_phone_number(self, phone_number: int):
+        self._phone_number = phone_number
+
     def get_uid(self):
         return self._uid
     
@@ -88,6 +93,9 @@ class User:
     
     def get_activation_timestamp(self):
         return self._activation_timestamp
+    
+    def get_phone_number(self):
+        return self._phone_number
     
     @staticmethod
     def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
@@ -142,7 +150,7 @@ class User:
     @staticmethod
     def username_exists(db_handler: DatabaseHandler, username: str):
         result = db_handler.fetch_user_data(username, User.hash_username(username))
-        return result is None
+        return result is not None
     
     @staticmethod
     def create_user(username: str, password: str, ic_no: str):
