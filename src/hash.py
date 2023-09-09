@@ -1,4 +1,5 @@
 def hash(s: str):
+    #hash
     p, m = 31, 10**9 + 7
     length = len(s)
     hash_value = 0
