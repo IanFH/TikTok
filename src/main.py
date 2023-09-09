@@ -47,7 +47,8 @@ def register_confirm():
 def register_callback():
     username = request.form['username']
     password = request.form['password']
-    user = User.create_user(username, password)
+    ic_no = request.form['ic_no']
+    user = User.create_user(username, password, ic_no)
     user.insert_to_database(database_handler)
     return redirect(url_for("root"))
 

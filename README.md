@@ -21,3 +21,11 @@ pip install -r requirements.txt
 ```bash
 python src/main.py
 ```
+
+## API Used
+- APScheduler (https://apscheduler.readthedocs.io/en/stable/)
+    - Used to schedule the background update of the database
+- Flask (https://flask.palletsprojects.com/en/1.1.x/)
+    - Used to create the web server
+- Stripe (https://stripe.com/docs/api)
+    - Used to handle payment

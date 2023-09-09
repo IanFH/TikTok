@@ -7,7 +7,7 @@ class User:
     def __init__(self, uid: int, 
                  username: str, username_hashed: int = None, 
                  password_hashed_one: int = None, password_hashed_two: int = None,
-                 balance: float = None):
+                 balance: float = None, ic_no: str = None):
         self._uid = uid
         self._username = username
         self._username_hashed = username_hashed
@@ -15,7 +15,8 @@ class User:
         self._password_hashed_two = password_hashed_two
         self._balance = balance
         self._contacts = None
-        self._favouite_contacts = None
+        self._favourite_contacts = None
+        self._ic_no = None
 
     def set_uid(self, uid: int):
         self._uid = uid
@@ -39,7 +40,10 @@ class User:
         self._contacts = contacts
 
     def set_favourite_contacts(self, favourite_contacts: list[str]):
-        self.favourite_contacts = favourite_contacts
+        self._favourite_contacts = favourite_contacts
+
+    def set_ic_no(self, ic_no: str):
+        self._ic_no = ic_no
 
     def get_uid(self):
         return self._uid
@@ -63,7 +67,10 @@ class User:
         return self._contacts
     
     def get_favourite_contacts(self):
-        return self.favourite_contacts
+        return self._favourite_contacts
+    
+    def get_ic_no(self):
+        return self._ic_no
     
     @staticmethod
     def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
@@ -82,7 +89,7 @@ class User:
             return False
         else:
             db_handler.insert_user(self._username, self._username_hashed, 
-                                   self._password_hashed_one, self._password_hashed_two)
+                                   self._password_hashed_one, self._password_hashed_two, self._ic_no)
             return True
         
     def get_transaction_history(self, 
@@ -111,11 +118,11 @@ class User:
         return result is None
     
     @staticmethod
-    def create_user(username: str, password: str):
+    def create_user(username: str, password: str, ic_no: str):
         username_hashed = User.hash_username(username)
         password_hashed_one = User.hash_password_one(password)
         password_hashed_two = User.hash_password_two(password)
-        return User(None, username, username_hashed, password_hashed_one, password_hashed_two)
+        return User(None, username, username_hashed, password_hashed_one, password_hashed_two, ic_no=ic_no)
         
     def serialise(self):
         return {
