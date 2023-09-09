@@ -33,15 +33,17 @@ class DatabaseHandler:
     
     def fetch_user_data(self, username: str, username_hashed: int):
         """
-
+        Fetches the user data from the database based on username
         """
         # TODO: Implement SQL query (Jeff)
         sql_query = """
-                    SELECT uid, username, username_hashed)
-                    FROM User_Table;
+                    SELECT uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no
+                    FROM User_Table
+                    WHERE username_hashed = %s;
                     """
         self.cursor.execute(sql_query, (username_hashed, ))
         results = self.cursor.fetchall()
+        print(f"results: {results}")
         # assuming that the username is in position 1
         for result in results:
             if result[1] == username:
