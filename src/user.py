@@ -1,5 +1,6 @@
 from database_handler import DatabaseHandler
 import datetime
+import psycopg
 
 
 class User:
@@ -7,7 +8,9 @@ class User:
     def __init__(self, uid: int, 
                  username: str, username_hashed: int = None, 
                  password_hashed_one: int = None, password_hashed_two: int = None,
-                 balance: float = None, ic_no: str = None):
+                 balance: float = None, ic_no: str = None,
+                 registration_timestamp: datetime.datetime = None,
+                 activation_timestamp: datetime.datetime = None):
         self._uid = uid
         self._username = username
         self._username_hashed = username_hashed
@@ -16,7 +19,9 @@ class User:
         self._balance = balance
         self._contacts = None
         self._favourite_contacts = None
-        self._ic_no = None
+        self._ic_no = ic_no
+        self._registration_timestamp = registration_timestamp
+        self._activation_timestamp = activation_timestamp
 
     def set_uid(self, uid: int):
         self._uid = uid
@@ -45,6 +50,12 @@ class User:
     def set_ic_no(self, ic_no: str):
         self._ic_no = ic_no
 
+    def set_registration_timestamp(self, registration_timestamp: datetime.datetime):
+        self._registration_timestamp = registration_timestamp
+
+    def set_activation_timestamp(self, activation_timestamp: datetime.datetime):
+        self._activation_timestamp = activation_timestamp
+
     def get_uid(self):
         return self._uid
     
@@ -72,6 +83,12 @@ class User:
     def get_ic_no(self):
         return self._ic_no
     
+    def get_registration_timestamp(self):
+        return self._registration_timestamp
+    
+    def get_activation_timestamp(self):
+        return self._activation_timestamp
+    
     @staticmethod
     def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
         uid = user_tuple[0]
@@ -88,9 +105,19 @@ class User:
         if result:
             return False
         else:
+            curr_timestamp = datetime.datetime.now()
             db_handler.insert_user(self._username, self._username_hashed, 
-                                   self._password_hashed_one, self._password_hashed_two, self._ic_no)
+                                   self._password_hashed_one, self._password_hashed_two, 
+                                   self._ic_no, curr_timestamp)
             return True
+        
+    def activate(self, db_handler: DatabaseHandler):
+        curr_timestamp = datetime.datetime.now()
+        try:
+            db_handler.activate_user(self._uid, curr_timestamp)
+            return
+        except psycopg.errors.Error:
+            return False
         
     def get_transaction_history(self, 
                                 db_handler: DatabaseHandler, 
