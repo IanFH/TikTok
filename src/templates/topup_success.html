@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout3.html" %}
 
 {% block content %}
 
@@ -6,14 +6,17 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content rounded-4 shadow">
         <div class="modal-header border-bottom-0">
-          <h1 class="modal-title fs-5">Top-up Successful</h1>
+          <h1 class="modal-title fs-5">Top-up Successful<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+          </svg></h1>
         </div>
         <div class="modal-body py-0">
           <p class="centre">Your e-wallet has been successfully topped up</p>
-          <p class="centre">Your new balance is {data["balance]%}</p>
+          <p class="centre">Your new balance is {{data["balance"]}}</p>
         </div>
         <div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-3 border-top-0">
-          <button type="button" class="btn btn-lg btn-primary" fdprocessedid="n64aog">Continue</button>
+          <a type="button" href="/home" class="btn btn-lg btn-secondary" fdprocessedid="n64aog">Continue</a>
         </div>
       </div>
     </div>
