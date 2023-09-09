@@ -2,23 +2,27 @@ from flask import Flask, redirect, url_for, request, render_template, session
 from login_handler import LoginHandler
 from urllib.parse import urlparse
 from user import User
+from user_credentials import UserCredentials
 from topup_handler import TopUpHandler
 from transaction_accumulator import TransactionAccumulator, FailsafeAccumulator
 from transaction_task import TransactionTask
 from bg_task_manager import BgTaskManager
 from env import APP_SK
 from database_handler import DatabaseHandler
+from authenticator import Authenticator
 import datetime
 
 
 app = Flask(__name__)
 app.secret_key = APP_SK
+authenticator = Authenticator()
 database_handler = DatabaseHandler()
 transaction_accumulator = TransactionAccumulator()
 failsafe_accumulator = FailsafeAccumulator()
 bg_task_manager = BgTaskManager(transaction_accumulator, 
                                 failsafe_accumulator, 
-                                database_handler)
+                                database_handler,
+                                authenticator)
 bg_task_manager.start()
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -49,13 +53,12 @@ def register_callback():
     print("CALLBACK")
     username = request.form['username'].strip()
     password = request.form['password'].strip()
-    phone_number = request.form['phone_number']
-    print(f"phone_number: {phone_number}")
-    print(f"type: {type(phone_number)}")
-    ic_no = request.form['id']
+    phone_number = int(request.form['phone_number'].strip())
+    ic_no = request.form['id'].strip()
     user = User.create_user(username, password, phone_number, ic_no)
     print(user)
     user.insert_to_database(database_handler)
+    authenticator.add_user_credentials(UserCredentials(ic_no, ))
     print("INSERTED")
     return redirect(url_for("login"))
 
