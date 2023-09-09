@@ -1,6 +1,7 @@
 from database_handler import DatabaseHandler
 import datetime
 import psycopg
+from hash import hash
 
 
 class User:
@@ -8,7 +9,7 @@ class User:
     def __init__(self, uid: int, 
                  username: str, username_hashed: int = None, 
                  password_hashed_one: int = None, password_hashed_two: int = None,
-                 balance: float = None, ic_no: str = None,
+                 balance: float = 0, ic_no: str = None,
                  registration_timestamp: datetime.datetime = None,
                  activation_timestamp: datetime.datetime = None,
                  phone_number: int = None):
@@ -24,6 +25,9 @@ class User:
         self._registration_timestamp = registration_timestamp
         self._activation_timestamp = activation_timestamp
         self._phone_number = phone_number
+
+    def __repr__(self):
+        return f"User(uid={self._uid}, ic_no:{self._ic_no}, phone_number: {self._phone_number}, balance: {self._balance})" 
 
     def set_uid(self, uid: int):
         self._uid = uid
@@ -114,9 +118,14 @@ class User:
             return False
         else:
             curr_timestamp = datetime.datetime.now()
+            print("INSERTING...")
+            # (uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, 
+            #  balance, registration_timestamp, activation_timestamp, ic_no)
             db_handler.insert_user(self._username, self._username_hashed, 
                                    self._password_hashed_one, self._password_hashed_two, 
-                                   self._ic_no, curr_timestamp)
+                                   self._phone_number, self._balance, curr_timestamp, None,
+                                   self._ic_no)
+            print("INSERTED")
             return True
         
     def activate(self, db_handler: DatabaseHandler):
@@ -137,15 +146,15 @@ class User:
     def hash_password_two(password: str):
         n = len(password)
         salted_password = password[0:n//4] + "$" + password[n//4:n//2] + "$" + password[n//2: n * 3 // 4] + "$" + password[n * 3 // 4:]
-        return abs(hash(salted_password))
+        return abs(hash(salted_password)) % (2 ** 31 - 1)
     
     @staticmethod
     def hash_password_one(password: str):
-        return abs(hash(password))
+        return abs(hash(password)) % (2 ** 31 - 1)
 
     @staticmethod 
     def hash_username(username: str):
-        return abs(hash(username))
+        return abs(hash(username)) % (2 ** 31 - 1)
 
     @staticmethod
     def username_exists(db_handler: DatabaseHandler, username: str):
@@ -153,11 +162,13 @@ class User:
         return result is not None
     
     @staticmethod
-    def create_user(username: str, password: str, ic_no: str):
+    def create_user(username: str, password: str, phone_number: int, ic_no: str):
         username_hashed = User.hash_username(username)
         password_hashed_one = User.hash_password_one(password)
         password_hashed_two = User.hash_password_two(password)
-        return User(None, username, username_hashed, password_hashed_one, password_hashed_two, ic_no=ic_no)
+        return User(None, username, username_hashed, password_hashed_one, 
+                    password_hashed_two, balance=0, 
+                    phone_number=phone_number, ic_no=ic_no)
         
     def serialise(self):
         return {
