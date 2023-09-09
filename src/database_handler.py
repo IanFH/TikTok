@@ -55,6 +55,23 @@ class DatabaseHandler:
             if result[1] == username:
                 return result
         return None
+    
+    def fetch_user_data_uid(self, uid: int):
+        """
+        Fetches the user data from the database based on username
+        """
+        # TODO: Implement SQL query (Jeff)
+        sql_query = """
+                    SELECT uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no
+                    FROM User_Table
+                    WHERE uid = %s;
+                    """
+        self.cursor.execute(sql_query, (uid, ))
+        results = self.cursor.fetchone()
+        print(f"results: {results}")
+        if len(results) > 0:
+            return results
+        return None
         
 
     def delete(self, uid: int):
@@ -114,8 +131,8 @@ class DatabaseHandler:
         """
         # TODO: Implement SQL query (Jeff)
         sql_query = """
-                    INSERT INTO Transaction_Table(tran_id, tran_amt, recepient_id, sender_id, tran_timestamp)
-                    VALUES (NULL, %s, %s, %s, %s); 
+                    INSERT INTO Transaction_Table(sender_id, recepient_id, tran_amt, tran_timestamp)
+                    VALUES (%s, %s, %s, %s); 
                     """
         self.cursor.execute(sql_query, (sender_uid, receiver_uid, amount, date))
         self.connection.commit()
@@ -126,7 +143,7 @@ class DatabaseHandler:
         """
         # TODO: modify table name if necessary (Jeff)
         sql_query = """
-                    INSERT INTO Transaction_Table VALUES (%s, %s, %s, %s)
+                    INSERT INTO Transaction_Table(sender_id, recepient_id, tran_amt, tran_timestamp) VALUES (%s, %s, %s, %s)
                     """
         self.cursor.executemany(sql_query, entries)
         self.connection.commit()
@@ -210,7 +227,9 @@ if __name__ == "__main__":
     # For testing of queries and execution of one off queries
     db_handler = DatabaseHandler()
     # sql_query = """
-    #             DELETE FROM User_Table;
+    #             UPDATE User_Table
+    #             SET balance = 0
+    #             WHERE uid = 2; 
     #             """
     # db_handler.cursor.execute(sql_query)
     # db_handler.connection.commit()

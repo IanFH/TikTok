@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template, session
 from login_handler import LoginHandler
-from urllib import parse
+from urllib.parse import urlparse
 from user import User
 from topup_handler import TopUpHandler
 from transaction_accumulator import TransactionAccumulator, FailsafeAccumulator
@@ -94,19 +94,21 @@ def topup():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
-    session['user'] = user.serialise()
-    url = parse(f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}")
+    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}"
+    print(url)
+    url = urlparse(f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}").geturl()
+    print(url)
     return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
-    user_serialised = session.get('user', None)
-    if user_serialised is None:
-        return redirect(url_for('root'))
     transaction_session_id = request.args.get('session_id', None)
     topup_handler = TopUpHandler(transaction_session_id)
-    res = topup_handler.process()
-    if res:
+    uid = topup_handler.process(transaction_accumulator)
+    if uid is not None:
+        user_data = database_handler.fetch_user_data_uid(uid)
+        user = User.from_tuple(user_data)
+        session['user'] = user.serialise()
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
         return render_template('topup_success.html')
