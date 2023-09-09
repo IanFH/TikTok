@@ -3,7 +3,7 @@ from login_handler import LoginHandler
 from urllib import parse
 from user import User
 from topup_handler import TopUpHandler
-from transaction_accumulator import TransactionAccumulator
+from transaction_accumulator import TransactionAccumulator, FailsafeAccumulator
 from transaction_task import TransactionTask
 from bg_task_manager import BgTaskManager
 from env import APP_SK
@@ -15,7 +15,10 @@ app = Flask(__name__)
 app.secret_key = APP_SK
 database_handler = DatabaseHandler()
 transaction_accumulator = TransactionAccumulator()
-bg_task_manager = BgTaskManager(transaction_accumulator, database_handler)
+failsafe_accumulator = FailsafeAccumulator()
+bg_task_manager = BgTaskManager(transaction_accumulator, 
+                                failsafe_accumulator, 
+                                database_handler)
 bg_task_manager.start()
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
