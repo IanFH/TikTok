@@ -1,4 +1,6 @@
 from database_handler import DatabaseHandler
+import datetime
+import psycopg
 
 
 class User:
@@ -6,7 +8,9 @@ class User:
     def __init__(self, uid: int, 
                  username: str, username_hashed: int = None, 
                  password_hashed_one: int = None, password_hashed_two: int = None,
-                 balance: float = None):
+                 balance: float = None, ic_no: str = None,
+                 registration_timestamp: datetime.datetime = None,
+                 activation_timestamp: datetime.datetime = None):
         self._uid = uid
         self._username = username
         self._username_hashed = username_hashed
@@ -14,7 +18,10 @@ class User:
         self._password_hashed_two = password_hashed_two
         self._balance = balance
         self._contacts = None
-        self._favouite_contacts = None
+        self._favourite_contacts = None
+        self._ic_no = ic_no
+        self._registration_timestamp = registration_timestamp
+        self._activation_timestamp = activation_timestamp
 
     def set_uid(self, uid: int):
         self._uid = uid
@@ -38,7 +45,16 @@ class User:
         self._contacts = contacts
 
     def set_favourite_contacts(self, favourite_contacts: list[str]):
-        self.favourite_contacts = favourite_contacts
+        self._favourite_contacts = favourite_contacts
+
+    def set_ic_no(self, ic_no: str):
+        self._ic_no = ic_no
+
+    def set_registration_timestamp(self, registration_timestamp: datetime.datetime):
+        self._registration_timestamp = registration_timestamp
+
+    def set_activation_timestamp(self, activation_timestamp: datetime.datetime):
+        self._activation_timestamp = activation_timestamp
 
     def get_uid(self):
         return self._uid
@@ -62,7 +78,16 @@ class User:
         return self._contacts
     
     def get_favourite_contacts(self):
-        return self.favourite_contacts
+        return self._favourite_contacts
+    
+    def get_ic_no(self):
+        return self._ic_no
+    
+    def get_registration_timestamp(self):
+        return self._registration_timestamp
+    
+    def get_activation_timestamp(self):
+        return self._activation_timestamp
     
     @staticmethod
     def from_tuple(user_tuple: tuple[int, str, int, int, int, float]):
@@ -80,11 +105,24 @@ class User:
         if result:
             return False
         else:
+            curr_timestamp = datetime.datetime.now()
             db_handler.insert_user(self._username, self._username_hashed, 
-                                   self._password_hashed_one, self._password_hashed_two)
+                                   self._password_hashed_one, self._password_hashed_two, 
+                                   self._ic_no, curr_timestamp)
             return True
         
-    def get_transaction_history(self, db_handler: DatabaseHandler, start_date: str, end_date: str):
+    def activate(self, db_handler: DatabaseHandler):
+        curr_timestamp = datetime.datetime.now()
+        try:
+            db_handler.activate_user(self._uid, curr_timestamp)
+            return
+        except psycopg.errors.Error:
+            return False
+        
+    def get_transaction_history(self, 
+                                db_handler: DatabaseHandler, 
+                                start_date: datetime.datetime, 
+                                end_date: datetime.datetime):
         return db_handler.fetch_transactions(self._uid, start_date, end_date)
     
     @staticmethod
@@ -107,11 +145,11 @@ class User:
         return result is None
     
     @staticmethod
-    def create_user(username: str, password: str):
+    def create_user(username: str, password: str, ic_no: str):
         username_hashed = User.hash_username(username)
         password_hashed_one = User.hash_password_one(password)
         password_hashed_two = User.hash_password_two(password)
-        return User(None, username, username_hashed, password_hashed_one, password_hashed_two)
+        return User(None, username, username_hashed, password_hashed_one, password_hashed_two, ic_no=ic_no)
         
     def serialise(self):
         return {
