@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 
+{% block page_title %}LeWallet - Register{% endblock %}
+
 {% block content %}
-<form class="row g-3" action="/register" method="POST">
+<form class="row g-3" action="/register/confirm" method="POST">
     <div class="col-md-6">
       <label for="username" class="form-label">Username</label>
       <input type="text" name="username" class="form-control" id="username">
@@ -17,6 +19,12 @@
     <div class="col-12">
       <label for="inputAddress" class="form-label">IC Number</label>
       <input type="text" name="id" class="form-control" id="id">
+    </div>
+    <div class="col-12">
+        <label for="inputPhoneNumber" class="form-label">Phone Number</label>
+        <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Enter phone digits" pattern="[0-9]*" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a valid phone number</div>
     </div>
 
     <div class="col-12">
