@@ -66,12 +66,12 @@ class TransactionAccumulator:
             entries = self._process_accounts()
             try:
                 db_handler.bulk_update_balance(entries)
-            except psycopg.DatabaseError:
-                failsafe_accumulator._add_transactions(self._curr_tasks)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
             try:
                 db_handler.bulk_insert_transactions(self._transaction_history)
-            except psycopg.DatabaseError:
-                failsafe_accumulator._add_transactions_history(self._curr_tasks)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
             self._accounts = {}
             self._transaction_history = []
     
@@ -88,7 +88,7 @@ class FailsafeAccumulator:
         self._MAIN_POOL_ID = -1
         self._failed_tasks = []
 
-    def _add_transaction(self, transaction_task: TransactionTask):
+    def add_task(self, transaction_task: TransactionTask):
         self._transaction_queue.enqueue(transaction_task)
 
     def process_transaction_tasks_seq(self, db_handler: DatabaseHandler):
