@@ -3,7 +3,7 @@
 {% block page_title %}LeWallet - Register{% endblock %}
 
 {% block content %}
-<form class="row g-3" action="/register/confirm" method="POST">
+<form class="row g-3" action="/register/confirm" method="POST" id="registration_form">
     <div class="col-md-6">
       <label for="username" class="form-label">Username</label>
       <input type="text" name="username" class="form-control" id="username">
@@ -43,4 +43,17 @@
       <button type="submit" class="btn btn-primary">Sign in</button>
     </div>
   </form>
+
+  <script>
+    document.getElementById("registration_form").addEventListener("submit", function(e){
+        e.preventDefault();
+        var password = document.getElementById("password").value;
+        var confirm_password = document.getElementById("confirm_password").value;
+        if (password != confirm_password){
+            alert("Password and Confirm Password do not match");
+        } else {
+            this.submit();
+        }
+    });
+  </script>
   {% endblock %}
