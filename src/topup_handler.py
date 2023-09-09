@@ -40,6 +40,6 @@ class TopUpHandler:
     def process(self, transaction_accumulator: TransactionAccumulator) -> bool:
         self._retrieve_checkout_session()
         if not self._validate_checkout_session():
-            return None
+            return None, None
         transaction_accumulator.add_topup_task(self._uid, self._amount_total, self._transaction_session_id)
-        return self._uid
+        return self._uid, self._amount_total

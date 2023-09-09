@@ -42,14 +42,18 @@ def register():
 @app.route('/register/confirm', methods=['POST'])
 def register_confirm():
     # TODO: Create HTML (Ian & Pandu)
-    print(f"phone number: {request.form['phone_number']}")
+    phone_number = request.form['phone_number'].strip()
+    if phone_number == '' or not phone_number.isnumeric():
+        return redirect(url_for('register', err_msg='Invalid phone number'))
     if request.form['password'] != request.form['confirm_password']:
         return redirect(url_for('register', err_msg='Passwords do not match'))
-    if User.username_exists(database_handler, request.form['username']):
+    if User.phone_number_exists(database_handler, phone_number):
+        return redirect(url_for('register', err_msg='Phone number already exists'))
+    if User.username_exists(database_handler, request.form['username'], User.hash_username(request.form['username'])):
         return redirect(url_for('register', err_msg='Username already exists'))
     return render_template('register_confirm.html', data=request.form)
 
-@app.route('/register/callback', methods=['GET','POST'])
+@app.route('/register/callback', methods=['POST'])
 def register_callback():
     print("CALLBACK")
     username = request.form['username'].strip()
@@ -98,24 +102,23 @@ def topup():
     if user_serialised is None:
         return redirect(url_for('root'))
     user = User.deserialise(user_serialised)
-    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}"
-    print(url)
-    url = urlparse(f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?client_reference_id={user.get_uid()}").geturl()
-    print(url)
+    url = f"https://buy.stripe.com/test_eVa6oJ7msgXi2QMbII?prefilled_email=test%40gmail.com&client_reference_id={user.get_uid()}"
+    url = urlparse(url).geturl()
     return redirect(url)
 
 @app.route('/topup/success')
 def topup_success():
     transaction_session_id = request.args.get('session_id', None)
     topup_handler = TopUpHandler(transaction_session_id)
-    uid = topup_handler.process(transaction_accumulator)
+    uid, topup_amount = topup_handler.process(transaction_accumulator)
     if uid is not None:
         user_data = database_handler.fetch_user_data_uid(uid)
         user = User.from_tuple(user_data)
+        user.set_balance(round(user.get_balance() + topup_amount, 2))
         session['user'] = user.serialise()
         # TODO: Create HTML (Ian & Pandu)
         print(f"Success!")
-        return render_template('topup_success.html')
+        return render_template('topup_success.html', user=user)
     else:
         return redirect(url_for('topup_fail'))
 
@@ -177,7 +180,7 @@ def complete():
             "username": user_recipient[1],
             "balance": round(user.get_balance() - float(transfer_amount), 2)
         }
-    return render_template('complete.html', data=request.form)
+    return render_template('complete.html', data=data)
 
 @app.route('/history')
 def history():
@@ -202,6 +205,7 @@ def history_details():
     end_date = datetime.datetime.strptime(end_date, HTML_DATE_FORMAT)
     user = User.deserialise(session['user'])
     transaction_history = user.get_transaction_history(database_handler, start_date, end_date)
+    print(transaction_history)
     return render_template('history_details.html', transaction_history=transaction_history)
 
 @app.route('/logout')

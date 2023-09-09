@@ -64,23 +64,21 @@ class TransactionAccumulator:
     def process_transaction_tasks(self, 
                                   db_handler: DatabaseHandler, 
                                   failsafe_accumulator):
-        print(f"PROCESSING TRANSACTION ACCUM")
         self._accumulate_transactions()
         if len(self._accounts) > 0:
             entries = self._process_accounts()
-            # try:
-            db_handler.bulk_update_balance(entries)
-            # except psycopg.errors.Error:
-            # failsafe_accumulator.add_task(self._curr_tasks)
-            # try:
-            db_handler.bulk_insert_transactions(self._transaction_history)
-            # except psycopg.errors.Error:
-            # failsafe_accumulator.add_task(self._curr_tasks)
+            try:
+                db_handler.bulk_update_balance(entries)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
+            try:
+                db_handler.bulk_insert_transactions(self._transaction_history)
+            except psycopg.errors.Error:
+                failsafe_accumulator.add_task(self._curr_tasks)
             self._accounts = {}
             self._transaction_history = []
     
     def clear_used_transaction_session_ids(self):
-        print("CLEARING USED TRANSACTION SESSION IDS")
         self._used_transaction_session_ids = set()
 
 
@@ -97,16 +95,13 @@ class FailsafeAccumulator:
         self._transaction_queue.enqueue(transaction_task)
 
     def process_transaction_tasks_seq(self, db_handler: DatabaseHandler):
-        print("RUNNING FAILSAFE")
         cnt = 0
         while self._transaction_queue.curr is not None and cnt < self._MAX_PER_UPDATE:
-            print("FOUND ISSUE, SOLVING")
             transaction_task = self._transaction_queue.dequeue()
             sender_uid = transaction_task.get_sender_uid()
             recipient_uid = transaction_task.get_recipient_uid()
             amount = transaction_task.get_amount()
             if transaction_task.get_sender_update_success():
-                #TODO: make balance absolute not relative
                 entry = (recipient_uid, amount)
                 try:
                     db_handler.update_balance(entry)
