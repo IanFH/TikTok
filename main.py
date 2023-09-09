@@ -48,6 +48,8 @@ def register_confirm():
         return redirect(url_for('register', err_msg='Phone number already exists'))
     if User.username_exists(database_handler, request.form['username'], User.hash_username(request.form['username'])):
         return redirect(url_for('register', err_msg='Username already exists'))
+    if User.ic_exists(database_handler, request.form['id']):
+        return redirect(url_for('register', err_msg='IC number already exists'))
     return render_template('register_confirm.html', data=request.form)
 
 @app.route('/register/callback', methods=['POST'])

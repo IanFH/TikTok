@@ -90,6 +90,19 @@ class DatabaseHandler:
         self.cursor.execute(sql_query, (uid, ))
         results = self.cursor.fetchone()
         return results
+    
+    def fetch_user_data_ic_no(self, ic_no: str):
+        """
+        Fetches the user data from the database based on username
+        """
+        sql_query = """
+                    SELECT uid, username, username_hashed, password_hashed_one, password_hashed_two, phone_no, balance, registration_timestamp, activation_timestamp, ic_no
+                    FROM User_Table
+                    WHERE ic_no = %s;
+                    """
+        self.cursor.execute(sql_query, (ic_no, ))
+        results = self.cursor.fetchone()
+        return results
 
     def delete(self, uid: int):
         """

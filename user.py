@@ -198,6 +198,11 @@ class User:
         return result is not None
     
     @staticmethod
+    def ic_exists(db_handler: DatabaseHandler, ic_no: str):
+        result = db_handler.fetch_user_data_ic_no(ic_no)
+        return result is not None
+    
+    @staticmethod
     def create_user(username: str, password: str, phone_number: int, ic_no: str):
         username_hashed = User.hash_username(username)
         password_hashed_one = User.hash_password_one(password)
