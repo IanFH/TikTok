@@ -1,6 +1,10 @@
+import datetime
+
+
 class TransactionTask:
 
-    def __init__(self, sender_uid: int, recipient_uid: int, amount: float, date: str) -> None:
+    def __init__(self, sender_uid: int, recipient_uid: int, 
+                 amount: float, date: datetime.datetime) -> None:
         self._sender_uid = sender_uid
         self._recipient_uid = recipient_uid
         if (amount <= 0):

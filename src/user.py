@@ -1,4 +1,5 @@
 from database_handler import DatabaseHandler
+import datetime
 
 
 class User:
@@ -84,7 +85,10 @@ class User:
                                    self._password_hashed_one, self._password_hashed_two)
             return True
         
-    def get_transaction_history(self, db_handler: DatabaseHandler, start_date: str, end_date: str):
+    def get_transaction_history(self, 
+                                db_handler: DatabaseHandler, 
+                                start_date: datetime.datetime, 
+                                end_date: datetime.datetime):
         return db_handler.fetch_transactions(self._uid, start_date, end_date)
     
     @staticmethod

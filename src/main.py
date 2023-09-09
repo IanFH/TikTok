@@ -157,7 +157,7 @@ def complete():
     user_recipient = database_handler.fetch_user_data(database_handler, 
                                                       recipient_username, 
                                                       User.hash_username(recipient_username))
-    curr_datetime = datetime.datetime.now().strftime(DATETIME_FORMAT)
+    curr_datetime = datetime.datetime.now()
     transaction_task = TransactionTask(user.get_uid(), user_recipient[0], transfer_amount, curr_datetime)
     transaction_accumulator.add_transfer_task(transaction_task)
     return render_template('complete.html', data=request.form)
@@ -173,11 +173,16 @@ def history():
 @app.route('/history/details', methods=['POST'])
 def history_details():
     # TODO: Create HTML (Ian & Pandu)
+    HTML_DATE_FORMAT = "%Y-%m-%d"
     user_serialised = session.get('user', None)
     if user_serialised is None:
         return redirect(url_for('root'))
-    start_date = request.form['start_date']
-    end_date = request.form['end_date']
+    start_date = request.form.get('start_date', None)
+    end_date = request.form.get('end_date', None)
+    if start_date is None or end_date is None:
+        return redirect(url_for('history'))
+    start_date = datetime.datetime.strptime(start_date, HTML_DATE_FORMAT)
+    end_date = datetime.datetime.strptime(end_date, HTML_DATE_FORMAT)
     user = User.deserialise(session['user'])
     transaction_history = user.get_transaction_history(database_handler, start_date, end_date)
     return render_template('history_details.html', transaction_history=transaction_history)

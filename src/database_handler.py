@@ -1,5 +1,6 @@
 import psycopg
 from env import DB_USER, DB_PASS, DB_HOST, DB_PORT
+import datetime
 
 
 class DatabaseHandler:
@@ -82,7 +83,7 @@ class DatabaseHandler:
         self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
-    def insert_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: str):
+    def insert_transaction(self, sender_uid: int, receiver_uid: int, amount: float, date: datetime.datetime):
         """
         Adds a transaction to the database
         """
@@ -91,7 +92,7 @@ class DatabaseHandler:
         self.cursor.execute(sql_query, (sender_uid, receiver_uid, amount, date))
         self.connection.commit()
     
-    def bulk_insert_transactions(self, entries: list[int, int, float, str]):
+    def bulk_insert_transactions(self, entries: list[int, int, float, datetime.datetime]):
         """
         Adds multiple transactions to the database
         """
@@ -102,7 +103,7 @@ class DatabaseHandler:
         self.cursor.executemany(sql_query, entries)
         self.connection.commit()
 
-    def fetch_transactions(self, uid: int, start_date: str, end_date: str):
+    def fetch_transactions(self, uid: int, start_date: datetime.datetime, end_date: datetime.datetime):
         """
         Fetches the transactions of a user from the database
         Each transaction is a tuple of (sender_uid, receiver_uid, amount, date)
