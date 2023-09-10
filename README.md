@@ -30,7 +30,7 @@ python main.py
 - Stripe (https://stripe.com/docs/api)
     - Used to handle payment
 
-## Testing Web App Procedure (Creating Account)
+## Testing Procedures
 
 ### Registration
 - Choose a unique user name, password and phone number
