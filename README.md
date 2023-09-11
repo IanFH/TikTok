@@ -39,7 +39,6 @@ python main.py
     - Each of the NRIC can only be used once
     - This is in compliance to our background authenticator
     - It might take up to 1 minute for the authenticator to authenticate the account, simulating real world conditions
-- Make sure to include the word "Singapore" in the address as we are simulating the condition of allowing access only to Singapore. Clearly, this can be extended to other countries as well.
 - Some possible unused phone numbers:
     ["00000000", "22222222", "10101010"]
 
@@ -59,4 +58,3 @@ python main.py
         - Name on card: Any name
         - Email: Any email
         - Phone Number: Any SG phone number
-        - Address: Any address
